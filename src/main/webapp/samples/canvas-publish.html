@@ -44,7 +44,7 @@
     <script src="../js/external/bootstrap.bundle.min.js"></script>
     <script type="module">
         import {WebRTCAdaptor} from '../js/ant-sdk/webrtc_adaptor.js';
-        import { BACKEND_URL } from '../js/samples-config.js';
+        import { SamplesConfig } from '../js/samples-config.js';
         import { getWebSocketURL } from '../js/ant-sdk/utility.js';
         import '../components/stream-controls.js';
         import '../components/video-view.js';
@@ -58,7 +58,7 @@
             const publishCanvas = document.getElementById('publish-canvas');
 
             const adaptor = new WebRTCAdaptor({
-                websocket_url: getWebSocketURL(BACKEND_URL),
+                websocket_url: getWebSocketURL(SamplesConfig.getBackendUrl()),
                 localVideoElement: localVideo.video,
                 dataChannelEnabled: true,
                 debug: true,

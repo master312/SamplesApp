@@ -33,7 +33,7 @@
     <!-- Import the WebRTCAdaptor and the component -->
     <script type="module">
         import { WebRTCAdaptor } from '../js/ant-sdk/webrtc_adaptor.js';
-        import { BACKEND_URL } from '../js/samples-config.js';
+        import { SamplesConfig } from '../js/samples-config.js';
         import { getWebSocketURL } from '../js/ant-sdk/utility.js';
         import { samples } from '../js/samples-list.js';
         // import './components/template-component.js';
@@ -41,7 +41,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // const templateComponent = document.getElementById('template-comp');
 
-            const websocketURL = getWebSocketURL(BACKEND_URL);
+            const websocketURL = getWebSocketURL(SamplesConfig.getBackendUrl());
 
             // Normally, you would initialize the adaptor with a websocket URL
             const adaptor = new WebRTCAdaptor({

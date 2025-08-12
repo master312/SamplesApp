@@ -63,7 +63,7 @@
     <script src="../js/external/bootstrap.bundle.min.js"></script>
     <script type="module">
         import {WebRTCAdaptor} from '../js/ant-sdk/webrtc_adaptor.js';
-        import { BACKEND_URL } from '../js/samples-config.js';
+        import { SamplesConfig } from '../js/samples-config.js';
         import { getWebSocketURL } from '../js/ant-sdk/utility.js';
         import '../components/video-view.js';
         import '../components/input-video-selector.js';
@@ -105,7 +105,7 @@
             };
 
             const webRTCAdaptor = new WebRTCAdaptor({
-                websocket_url: getWebSocketURL(BACKEND_URL),
+                websocket_url: getWebSocketURL(SamplesConfig.getBackendUrl()),
                 dataChannelEnabled: true,
                 mediaConstraints: mediaConstraints,
             });

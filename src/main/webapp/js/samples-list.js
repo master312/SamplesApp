@@ -1,4 +1,5 @@
 import { createSampleHomeCard, createSampleHomeCardNoImage } from './sample-home-card.js';
+import { SamplesConfig } from './samples-config.js';
 
 const SAMPLES_DIR = 'samples/';
 const DEMOS_DIR = 'demos/';
@@ -8,12 +9,12 @@ const ICONS_DIR = 'css/external/icons/';
 const CATEGORIES = {
     BASIC: {
         id: 'basic',
-        title: 'Basic Samples',
+        title: 'Demo Samples',
         icon: `${ICONS_DIR}joystick.svg`,
     },
-    LIVE_DEMO: {
-        id: 'live-demo',
-        title: 'Live demos',
+    LIVE_APPS: {
+        id: 'live-apps',
+        title: 'Applications',
         icon: `${ICONS_DIR}cast.svg`,
         showInSamplesViewMenu: false,
     },
@@ -38,29 +39,29 @@ const TAGS = {
 export const samples = [
     {
         name: "Conference",
-        link: `https://meet.antmedia.io/Conference/`,
-        category: CATEGORIES.LIVE_DEMO,
+        link: SamplesConfig.getConferenceUrl(),
+        category: CATEGORIES.LIVE_APPS,
         description: "Join a multi-party conference call. (Placeholder)",
         image: `${IMG_DIR}conference.png`,
         onHoverMedia: `${IMG_DIR}/conference_hover.mp4`,
         tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
         homeCardFactory: createSampleHomeCard,
     },
-    {
-        name: "Webinar",
-        link: `${SAMPLES_DIR}webinar.html`,
-        useSampleViewer: true,
-        category: CATEGORIES.LIVE_DEMO,
-        description: "Publish and watch in a webinar setting. (Placeholder)",
-        image: `${IMG_DIR}webinar.png`,
-        // onHoverMedia: 'img/samples/webinar_hover.mp4',
-        tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
-        homeCardFactory: createSampleHomeCard,
-    },
+    // {
+    //     name: "Webinar",
+    //     link: `${SAMPLES_DIR}webinar.html`,
+    //     useSampleViewer: true,
+    //     category: CATEGORIES.LIVE_DEMO,
+    //     description: "Publish and watch in a webinar setting. (Placeholder)",
+    //     image: `${IMG_DIR}webinar.png`,
+    //     // onHoverMedia: 'img/samples/webinar_hover.mp4',
+    //     tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
+    //     homeCardFactory: createSampleHomeCard,
+    // },
     {
         name: "Broadcast Live",
         link: `${DEMOS_DIR}publish-demo.html`,
-        category: CATEGORIES.LIVE_DEMO,
+        category: CATEGORIES.LIVE_APPS,
         description: "Publish and watch in a webinar setting. (Placeholder)",
         image: `${IMG_DIR}publish-demo.png`,
         onHoverMedia: `${IMG_DIR}publish-demo.mp4`,

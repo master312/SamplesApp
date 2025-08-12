@@ -45,7 +45,7 @@
     </div>
 
     <script type="module">
-        import { BACKEND_URL } from '../js/samples-config.js';
+        import { SamplesConfig } from '../js/samples-config.js';
         import '../components/vod-browser.js';
         import '../components/vod-uploader.js';
         import '../components/video-view.js';
@@ -56,7 +56,8 @@
             const vodPlayer = document.getElementById('vod-player');
             const currentVodName = document.getElementById('current-vod-name');
 
-            const serverUrl = BACKEND_URL.origin + BACKEND_URL.pathname;
+            const backendUrl = SamplesConfig.getBackendUrl();
+            const serverUrl = backendUrl.origin + backendUrl.pathname;
             vodBrowser.setBackendUrl(serverUrl);
             vodUploader.setBackendUrl(serverUrl);
 

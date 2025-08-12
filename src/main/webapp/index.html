@@ -41,6 +41,13 @@
             height: 28px;
         }
         
+        .config-info {
+            margin-top: 1rem;
+        }
+        
+        .config-item.hideable { display: none; }
+        .config-item.hideable.show { display: list-item; }
+        
         .footer {
             padding: 2rem 0;
             margin-top: 2rem;
@@ -62,6 +69,20 @@
                 </ul>
             </div>
         </div>
+        
+        <div class="config-info">
+            <div class="alert alert-light border">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <strong>Configuration</strong>
+                    <button id="config-toggle" class="btn btn-sm btn-outline-primary" type="button">
+                        Show all config
+                    </button>
+                </div>
+                <ul id="config-list" class="mb-0">
+                    <!-- Config items will be populated here -->
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -75,8 +96,56 @@
 
 <script type="module">
     import { samples } from './js/samples-list.js';
+    import { SamplesConfig } from './js/samples-config.js';
 
     document.addEventListener("DOMContentLoaded", function () {
+        initializeConfigInfo();
+        initializeSamplesList();
+    });
+
+    function initializeConfigInfo() {
+        const configToggle = document.getElementById('config-toggle');
+        const configList = document.getElementById('config-list');
+
+        const allMethods = Object.getOwnPropertyNames(SamplesConfig)
+            .filter(name => typeof SamplesConfig[name] === 'function' && name.startsWith('get'))
+            .sort();
+
+        // Put getBackendUrl first if it exists
+        const backendIndex = allMethods.indexOf('getBackendUrl');
+        if (backendIndex > -1) {
+            allMethods.splice(backendIndex, 1);
+            allMethods.unshift('getBackendUrl');
+        }
+
+        allMethods.forEach((methodName, index) => {
+            try {
+                const value = SamplesConfig[methodName]();
+                const li = document.createElement('li');
+                li.className = index === 0 ? 'config-item' : 'config-item hideable';
+                li.innerHTML = `<strong>${methodName}</strong>: <code>${value?.href || String(value)}</code>`;
+                configList.appendChild(li);
+            } catch (e) {
+                const li = document.createElement('li');
+                li.className = index === 0 ? 'config-item' : 'config-item hideable';
+                li.innerHTML = `<strong>${methodName}</strong>: <code>Unavailable</code>`;
+                configList.appendChild(li);
+            }
+        });
+
+        // Toggle functionality
+        configToggle.addEventListener('click', () => {
+            const hideableItems = document.querySelectorAll('.config-item.hideable');
+            const isShowing = hideableItems[0]?.classList.contains('show');
+            
+            hideableItems.forEach(item => item.classList.toggle('show'));
+            configToggle.textContent = isShowing
+                ? 'Hide config' 
+                : 'Show all config';
+        });
+    }
+
+    function initializeSamplesList() {
         const container = document.getElementById('samples-list-container');
         if (typeof samples === 'undefined' || samples.length === 0) {
             container.innerHTML = '<p>No samples found.</p>';
@@ -126,7 +195,7 @@
                 }
             });
         }, 1000); // Delay to ensure main content is loaded
-    });
+    }
 </script>
 </body>
 </html> 
