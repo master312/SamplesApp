@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media Server - Samples</title>
+    <link rel="stylesheet" href="css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="css/sample-home-card.css">
+
+    <style>
+        body {
+            background-color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .header {
+            padding: 2rem 0;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+
+        .header h1 {
+            font-weight: 600;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+            font-weight: 500;
+            padding-bottom: 0.5rem;
+            color: #343a40;
+        }
+
+        .category-header img {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .footer {
+            padding: 2rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid #e5e5e5;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col">
+                <h1>WebRTC Samples</h1>
+            </div>
+            <div class="col-auto">
+                <ul class="nav">
+                    <li class="nav-item"><a href="http://antmedia.io" target="_blank" class="nav-link">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="samples-list-container" class="container">
+    <!-- dynamic content injected here -->
+</div>
+
+<footer class="footer text-center">
+    <p>&copy; 2026 <a href="http://antmedia.io" target="_blank">Ant Media Server</a></p>
+</footer>
+
+<script type="module">
+    import { samples } from './js/samples-list.js';
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById('samples-list-container');
+        if (typeof samples === 'undefined' || samples.length === 0) {
+            container.innerHTML = '<p>No samples found.</p>';
+            return;
+        }
+
+        const groupedSamples = samples.reduce((acc, sample) => {
+            const categoryId = sample.category.id;
+            if (!acc[categoryId]) {
+                acc[categoryId] = {
+                    ...sample.category,
+                    samples: []
+                };
+            }
+            acc[categoryId].samples.push(sample);
+            return acc;
+        }, {});
+
+        for (const categoryId in groupedSamples) {
+            const category = groupedSamples[categoryId];
+
+            const categoryHeader = document.createElement('div');
+            categoryHeader.className = 'category-header';
+            categoryHeader.innerHTML = `<img src="${category.icon}" alt=""> ${category.title}`;
+            container.appendChild(categoryHeader);
+
+            const row = document.createElement('div');
+            row.className = 'row';
+            container.appendChild(row);
+
+            category.samples.forEach(sample => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-6 col-md-6 mb-4 px-4';
+                const sampleCard = sample.homeCardFactory(sample);
+                col.appendChild(sampleCard);
+                row.appendChild(col);
+            });
+        }
+        
+        // Lazy load videos after page settles
+        setTimeout(() => {
+            const videos = document.querySelectorAll('video[data-src]');
+            videos.forEach(video => {
+                const source = video.querySelector('source');
+                if (source && source.dataset.src) {
+                    video.src = source.dataset.src;
+                }
+            });
+        }, 1000); // Delay to ensure main content is loaded
+    });
+</script>
+</body>
+</html> 
