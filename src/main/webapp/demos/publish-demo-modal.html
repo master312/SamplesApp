@@ -1,0 +1,111 @@
+<!-- Settings Modal -->
+<style>
+    /* Hide label overlay in modal video preview */
+    #modal-video-preview #label {
+        display: none !important;
+    }
+    
+    /* Responsive modal sizing */
+    @media (max-width: 768px) {
+        .modal-dialog {
+            min-width: 95vw !important;
+            min-height: auto !important;
+        }
+        
+        .video-preview-wrapper {
+            margin-top: 1rem;
+        }
+    }
+</style>
+<div class="modal fade" id="settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document" style="min-width: 900px; min-height: 600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.928.928 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.928.928 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.928.928 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.928.928 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.928.928 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.928.928 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.928.928 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.928.928 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                    </svg>
+                    Stream Settings
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row no-gutters">
+                    <!-- Left Sidebar - Navigation -->
+                    <div class="col-md-3 bg-light border-right">
+                        <div class="nav flex-column nav-pills p-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <a class="nav-link active d-flex align-items-center mb-2" id="v-pills-video-tab" data-toggle="pill" href="#v-pills-video" role="tab" aria-controls="v-pills-video" aria-selected="true">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                                    <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/>
+                                </svg>
+                                Video
+                            </a>
+                            <a class="nav-link d-flex align-items-center mb-2" id="v-pills-audio-tab" data-toggle="pill" href="#v-pills-audio" role="tab" aria-controls="v-pills-audio" aria-selected="false">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                                    <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
+                                    <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3"/>
+                                </svg>
+                                Audio
+                            </a>
+                            <a class="nav-link d-flex align-items-center" id="v-pills-advanced-tab" data-toggle="pill" href="#v-pills-advanced" role="tab" aria-controls="v-pills-advanced" aria-selected="false">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.928.928 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.928.928 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.928.928 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.928.928 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.928.928 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.928.928 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.928.928 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.928.928 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                                </svg>
+                                Advanced
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Content Area -->
+                    <div class="col-md-9">
+                        <div class="tab-content p-4" id="v-pills-tabContent">
+                            <!-- Video Settings Tab -->
+                            <div class="tab-pane fade show active" id="v-pills-video" role="tabpanel" aria-labelledby="v-pills-video-tab">
+                                <h5 class="mb-4" style="color: #ff4444;">Video Settings</h5>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <input-video-selector id="modal-video-selector"></input-video-selector>
+                                        <advanced-video-publisher-settings id="modal-video-advanced"></advanced-video-publisher-settings>
+                                        
+                                        <!-- AR Backgrounds Section -->
+                                        <div class="mt-4">
+                                            <h6 style="color: #666; margin-bottom: 1rem;">Virtual Backgrounds</h6>
+                                            <virtual-background-manager id="virtual-background-manager"></virtual-background-manager>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="settings-preview-container">
+                                            <h6 style="color: #666; margin-bottom: 1rem;">Preview</h6>
+                                            <div class="video-preview-wrapper" style="position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 aspect ratio */ background: #000; border-radius: 8px; overflow: hidden;">
+                                                <video-view id="modal-video-preview" muted show-controls="false" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></video-view>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Audio Settings Tab -->
+                            <div class="tab-pane fade" id="v-pills-audio" role="tabpanel" aria-labelledby="v-pills-audio-tab">
+                                <h5 class="mb-4" style="color: #ff4444;">Audio Settings</h5>
+                                <input-audio-selector id="modal-audio-selector"></input-audio-selector>
+                                <advanced-audio-publisher-settings id="modal-audio-advanced"></advanced-audio-publisher-settings>
+                            </div>
+                            
+                            <!-- Advanced Settings Tab -->
+                            <div class="tab-pane fade" id="v-pills-advanced" role="tabpanel" aria-labelledby="v-pills-advanced-tab">
+                                <h5 class="mb-4" style="color: #ff4444;">Advanced Settings</h5>
+                                <stream-publish-analytics id="modal-stream-analytics"></stream-publish-analytics>
+                                <data-channel-messaging id="modal-data-channel"></data-channel-messaging>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

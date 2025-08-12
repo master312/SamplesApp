@@ -1,0 +1,17 @@
+:host {
+    display: block;
+}
+.card {
+    margin-top: 1rem;
+}
+.card-header {
+    cursor: pointer;
+}
+.gain-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.gain-value {
+    min-width: 3em;
+} 

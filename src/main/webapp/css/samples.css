@@ -1,0 +1,27 @@
+/* Common CSS sheet for samples */
+
+body {
+    padding-bottom: 20vh;
+}
+
+.embed-responsive .embed-responsive-item,
+video.embed-responsive-item {
+    background-color: #f8f9fa; /* A light grey background */
+    border: 1px solid #dee2e6; /* A subtle border */
+    border-radius: .25rem;
+}
+
+audio {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.back-button {
+    margin-bottom: 20px;
+} 

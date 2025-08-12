@@ -1,0 +1,34 @@
+/* Common styles for components */
+
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.collapsible-header::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 0.4em solid transparent;
+    border-bottom: 0.4em solid transparent;
+    border-left: 0.4em solid;
+    color: currentColor;
+    transition: transform 0.2s ease-in-out;
+}
+
+.collapsible-header[aria-expanded="true"]::after {
+    transform: rotate(90deg);
+}
+
+.stream-status-online {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.stream-status-offline {
+    background-color: #dc3545 !important;
+    color: white !important;
+} 

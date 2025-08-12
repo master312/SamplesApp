@@ -1,0 +1,9 @@
+/* Basic styling for the toggle-microphone button */
+#toggle-microphone-button {
+    /* Add any specific styles for the button here */
+}
+
+#microphone-icon {
+    width: 24px;
+    height: 24px;
+} 

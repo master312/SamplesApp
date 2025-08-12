@@ -1,0 +1,11 @@
+.DS_Store
+.idea
+.vscode
+/.settings
+/target/
+/codesigning.asc
+node_modules
+/dist
+/coverage/
+/tsbuild
+/types

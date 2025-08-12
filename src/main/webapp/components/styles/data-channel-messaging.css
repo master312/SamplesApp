@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    margin-top: 1rem;
+}
+#all-messages {
+    height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ced4da;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f8f9fa;
+}
+.stream-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.stream-options {
+    display: flex;
+    gap: 1rem;
+} 

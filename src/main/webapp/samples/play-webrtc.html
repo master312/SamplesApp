@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Play</title>
+    <link rel="stylesheet" href="../../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/samples.css">
+    <script src="../js/external/adapter-latest.js"></script>
+    <script src="../js/external/chartjs/chart.umd.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href="../index.html" target="_top" class="btn btn-light back-button">← Back to Samples</a>
+            </div>
+        </div>
+        <div class="header clearfix">
+            <h3 class="text-muted">WebRTC Play</h3>
+            <p>This sample demonstrates how to play a WebRTC stream.</p>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video-view id="remote-video" label="Remote Stream"></video-view>
+                </div>
+            </div>
+        </div>
+
+        <stream-controls id="stream-controls" class="mt-3"
+            start-button-text="Start Playing"
+            stop-button-text="Stop Playing">
+        </stream-controls>
+
+        <resolution-selector id="resolution-selector" class="mt-3"></resolution-selector>
+
+        <stream-simple-state id="stream-state" class="mt-3"></stream-simple-state>
+
+        <div class="row">
+            <div class="col">
+                <data-channel-messaging id="data-channel"></data-channel-messaging>
+                <data-channel-file-share id="file-share" class="mt-3"></data-channel-file-share>
+                <stream-play-analytics id="stream-info"></stream-play-analytics>
+                <msg-display id="msg-displayer" class="mt-3"></msg-display>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="../js/external/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import {WebRTCAdaptor} from '../js/ant-sdk/webrtc_adaptor.js';
+        import { BACKEND_URL } from '../js/samples-config.js';
+        import { getWebSocketURL } from '../js/ant-sdk/utility.js';
+        import '../components/stream-controls.js';
+        import '../components/stream-simple-state.js';
+        import '../components/video-view.js';
+        import '../components/stream-play-analytics.js';
+        import '../components/data-channel-messaging.js';
+        import '../components/data-channel-file-share.js';
+        import '../components/msg-display.js';
+        import '../components/resolution-selector.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const controls = document.getElementById('stream-controls');
+            const remoteVideo = document.getElementById('remote-video');
+            const streamInfo = document.getElementById('stream-info');
+            const dataChannel = document.getElementById('data-channel');
+            const fileShare = document.getElementById('file-share');
+            const streamState = document.getElementById('stream-state');
+            const msgDisplayer = document.getElementById('msg-displayer');
+            const resolutionSelector = document.getElementById('resolution-selector');
+
+            const adaptor = new WebRTCAdaptor({
+                websocket_url: getWebSocketURL(BACKEND_URL),
+                remoteVideoElement: remoteVideo.video,
+                isPlayMode: true,
+                dataChannelEnabled: true,
+                reconnectIfRequiredFlag: false,
+                callback: (info, obj) => {
+                    if (info === "play_started") {
+                    } else if (info === "play_finished") {
+                    } else if (info === "closed") {
+                        if (typeof obj != "undefined") {
+                            console.log("Connecton closed: " + JSON.stringify(obj));
+                        }
+                    }
+                },
+                callbackError: (error, message) => {
+                    console.error("error callback: " + JSON.stringify(error));
+                    // alert("Error: " + JSON.stringify(error));
+                }
+            });
+
+            controls.setup(adaptor, 'play');
+            streamInfo.setup(adaptor);
+            dataChannel.setup(adaptor);
+            fileShare.setup(adaptor);
+            streamState.setup(adaptor);
+            msgDisplayer.setup(adaptor);
+            resolutionSelector.setup(adaptor);
+
+            controls.addEventListener('start-stream', (e) => {
+                const streamId = e.detail.streamId;
+                if (streamId) {
+                    adaptor.play(streamId);
+                } else {
+                    alert('Please enter a stream name.');
+                }
+            });
+
+            controls.addEventListener('stop-stream', (e) => {
+                adaptor.stop(e.detail.streamId);
+            });
+
+            resolutionSelector.addEventListener('resolution-changed', (e) => {
+                console.log(`Resolution changed to: ${e.detail.text} for stream: ${e.detail.streamId}`);
+            });
+        });
+    </script>
+</body>
+</html> 

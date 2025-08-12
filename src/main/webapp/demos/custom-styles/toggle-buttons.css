@@ -1,0 +1,25 @@
+/* Custom styles for toggle buttons */
+#toggle-camera-button,
+#toggle-microphone-button {
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border: 1px solid #cc0000;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.25);
+}
+
+#toggle-camera-button:hover,
+#toggle-microphone-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 68, 68, 0.3);
+}
+
+#toggle-camera-button.btn-danger,
+#toggle-microphone-button.btn-danger {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-color: #ced4da;
+    color: #6c757d;
+} 

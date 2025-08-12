@@ -1,0 +1,78 @@
+.msg-display-container {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f7f7f7;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.header-title {
+    font-weight: bold;
+    user-select: none;
+}
+
+.header:hover {
+    background-color: #efefef;
+}
+
+.controls .btn {
+    margin-left: 5px;
+}
+
+#settings-panel {
+    padding: 10px;
+    background-color: #fdfdfd;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#log-container {
+    height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.log-message {
+    padding: 2px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.log-message.error {
+    color: #dc3545;
+}
+
+.log-message .time {
+    color: #6c757d;
+}
+
+.log-message .name {
+    font-weight: bold;
+}
+
+.log-message .data {
+    color: #333;
+}
+
+/* Error toggle styling */
+.error-toggle {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Add a red border to the error toggle switch when checked */
+#toggle-error:checked + .error-toggle::before {
+    border-color: #dc3545;
+    background-color: #dc3545;
+} 

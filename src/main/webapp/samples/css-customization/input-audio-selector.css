@@ -1,0 +1,7 @@
+/* Audio selector theme - Blue gradient */
+@import './input-selector-common.css';
+
+:host {
+    --selector-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --selector-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+} 

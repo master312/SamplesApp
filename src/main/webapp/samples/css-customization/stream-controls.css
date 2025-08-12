@@ -1,0 +1,126 @@
+/* Stream controls with purple theme - simplified and organized */
+
+:host {
+    display: block;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Input group styling */
+.input-group {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 1rem !important;
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 16px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+.form-control {
+    background: white !important;
+    border: none !important;
+    color: #333 !important;
+    padding: 12px 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+.form-control:focus {
+    background: white !important;
+    border: none !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
+    color: #333 !important;
+    outline: none !important;
+}
+
+/* Button styling with animations */
+.btn {
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 12px 24px !important;
+    border-radius: 25px !important;
+    border: none !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+/* Button shine animation */
+.btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover:before {
+    left: 100%;
+}
+
+/* Button variants */
+.btn-primary {
+    background: linear-gradient(135deg, #56ab2f, #a8e6cf) !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4a9a28, #96d9bb) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b) !important;
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #e73960, #e64326) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4) !important;
+}
+
+/* Custom checkbox styling */
+.custom-control {
+    margin-top: 1rem !important;
+}
+
+.custom-control-label {
+    color: white !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #56ab2f !important;
+    border-color: #56ab2f !important;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 0.2rem rgba(86, 171, 47, 0.25) !important;
+} 

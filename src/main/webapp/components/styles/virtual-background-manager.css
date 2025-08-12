@@ -1,0 +1,40 @@
+.background-options-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.background-option {
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.background-option:hover {
+    border-color: #007bff;
+}
+
+.background-option.selected {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.background-option img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.background-option span {
+    font-size: 12px;
+}
+
+#custom-background-container label {
+    cursor: pointer;
+} 

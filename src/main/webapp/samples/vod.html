@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOD Player</title>
+    <link rel="stylesheet" href="../../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/samples.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href="../index.html" target="_top" class="btn btn-light back-button">← Back to Samples</a>
+            </div>
+        </div>
+        <div class="header clearfix">
+            <h3 class="text-muted">VOD Player</h3>
+            <p>This sample demonstrates how to browse, upload, and play VOD files from the server.</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-10 mx-auto">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video-view id="vod-player" show-controls="true"></video-view>
+                </div>
+                <h5 id="current-vod-name" class="mt-2 text-center"></h5>
+            </div>
+        </div>
+
+        <vod-browser id="vod-browser"
+            server-url=""
+            page-size="12">
+        </vod-browser>
+
+        <div class="row mt-4 mb-4">
+            <div class="col">
+                <vod-uploader id="vod-uploader"
+                    server-url=""
+                    max-file-size="500MB">
+                </vod-uploader>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { BACKEND_URL } from '../js/samples-config.js';
+        import '../components/vod-browser.js';
+        import '../components/vod-uploader.js';
+        import '../components/video-view.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const vodBrowser = document.getElementById('vod-browser');
+            const vodUploader = document.getElementById('vod-uploader');
+            const vodPlayer = document.getElementById('vod-player');
+            const currentVodName = document.getElementById('current-vod-name');
+
+            const serverUrl = BACKEND_URL.origin + BACKEND_URL.pathname;
+            vodBrowser.setBackendUrl(serverUrl);
+            vodUploader.setBackendUrl(serverUrl);
+
+            vodBrowser.addEventListener('vod-selected', (event) => {
+                const vod = event.detail.vod;
+                console.log('VOD Selected:', vod);
+                
+                const vodUrl = `${serverUrl}/${vod.filePath}`;
+
+                vodPlayer.video.src = vodUrl;
+                vodPlayer.video.play().catch(error => {
+                    console.error('Error playing VOD:', error);
+                    alert('Failed to play the video. Please try again.');
+                });
+
+                currentVodName.textContent = vod.vodName;
+            });
+
+            vodBrowser.addEventListener('vod-deleted', (event) => {
+                console.log('VOD Deleted:', event.detail.vod);
+                if (currentVodName.textContent === event.detail.vod.vodName) {
+                    currentVodName.textContent = '';
+                    vodPlayer.video.src = '';
+                }
+            });
+
+            vodUploader.addEventListener('vod-uploaded', (event) => {
+                console.log('VOD Uploaded:', event.detail.vod);
+                vodBrowser.refresh();
+            });
+
+            vodUploader.addEventListener('error', (event) => {
+                console.error('Upload Error:', event.detail);
+                alert(`Upload Failed: ${event.detail.message}`);
+            });
+
+            vodBrowser.addEventListener('error', (event) => {
+                console.error('VOD Browser Error:', event.detail.message);
+                alert(`Error from VOD Browser: ${event.detail.message}`);
+            });
+        });
+    </script>
+</body>
+</html> 

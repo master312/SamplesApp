@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media - Start Publishing</title>
+    
+    <!-- Load the CSS configuration FIRST -->
+    <script src="../AntMediaCSSConfig.js"></script>
+    
+    <!-- Override default CSS paths for customization -->
+    <script>
+        window.AntMediaConfig.componentStyles['video-view'] = './custom-styles/video-view.css';
+        window.AntMediaConfig.componentStyles['stream-controls'] = './custom-styles/stream-controls.css';
+        window.AntMediaConfig.componentStyles['toggle-camera'] = './custom-styles/toggle-buttons.css';
+        window.AntMediaConfig.componentStyles['toggle-microphone'] = './custom-styles/toggle-buttons.css';
+        window.AntMediaConfig.commonStyles['component-common'] = './custom-styles/component-common.css';
+    </script>
+    
+    <link rel="stylesheet" href="../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="./custom-styles/publish-demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-card">
+            <div class="demo-header">
+                <h2 class="demo-title">Ready to go live?</h2>
+                <p class="demo-subtitle">Check your setup and start streaming in seconds</p>
+            </div>
+            
+            <div class="demo-content">
+                <div class="demo-video-section">
+                    <div class="video-preview-container">
+                        <video-view id="video-preview" is-local show-controls="false" label="Preview"></video-view>
+                    </div>
+                </div>
+                
+                <div class="demo-controls-section">
+                    <div class="stream-setup">
+                        <stream-controls 
+                            id="stream-controls" 
+                            start-button-text="Start Streaming" 
+                            stop-button-text="Stop Streaming"
+                            disable-input>
+                        </stream-controls>
+                        
+                        <div class="d-flex justify-content-center my-2">
+                            <toggle-camera id="toggle-camera" class="mr-2"></toggle-camera>
+                            <toggle-microphone id="toggle-microphone"></toggle-microphone>
+                        </div>
+                        
+                        <button id="watch-stream-button" class="watch-stream-btn" type="button" disabled>
+                            Watch Stream
+                        </button>
+
+                        <button id="settings-button" class="settings-btn" type="button" data-toggle="modal" data-target="#settings-modal">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 0.5rem;">
+                                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.928.928 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.928.928 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.928.928 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.928.928 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.928.928 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.928.928 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.928.928 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.928.928 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                            </svg>
+                            Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-footer">
+                <a href="../index.html" class="back-link">← Back to Samples</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/external/chartjs/chart.umd.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="../js/external/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./publish-demo-modal.js"></script>
+    <script type="module" src="./publish-demo.js"></script>
+</body>
+</html> 

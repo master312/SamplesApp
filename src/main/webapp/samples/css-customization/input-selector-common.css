@@ -1,0 +1,47 @@
+/* Shared styles for input selectors with CSS custom properties for theming */
+
+:host {
+    display: block;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--selector-gradient, linear-gradient(135deg, #f093fb 0%, #f5576c 100%));
+    border-radius: 15px;
+    box-shadow: var(--selector-shadow, 0 8px 25px rgba(240, 147, 251, 0.3));
+}
+
+.input-group {
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: none !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 16px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+.form-control, .custom-select {
+    background: white !important;
+    border: none !important;
+    color: #333 !important;
+    padding: 12px 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+}
+
+.form-control:focus, .custom-select:focus {
+    background: white !important;
+    border: none !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3) !important;
+    color: #333 !important;
+    outline: none !important;
+} 

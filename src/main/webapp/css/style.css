@@ -1,0 +1,75 @@
+/* Main CSS sheet, common for all pages. */
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+}
+.container-fluid {
+    display: flex;
+    height: 100%;
+    padding: 0;
+}
+#sidebar {
+    width: 280px;
+    background: #f1f1f1;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #ddd;
+}
+#content {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+}
+#sidebar h4 {
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.nav-link {
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 4px;
+}
+.nav-link:hover {
+    background-color: #e2e2e2;
+}
+.nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+.nav-category {
+    font-weight: 600;
+    color: #6c757d;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 0 15px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: .05rem;
+    cursor: pointer;
+}
+.nav-category::before {
+    content: '▼ ';
+    font-size: 0.8em;
+}
+.nav-category.collapsed::before {
+    content: '▶ ';
+}
+.nav-category-items {
+    padding-left: 15px;
+}
+.nav-item-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-item-container .nav-link {
+    flex-grow: 1;
+    padding-right: 5px;
+}
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+} 

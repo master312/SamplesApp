@@ -1,0 +1,9 @@
+:host {
+    display: block;
+}
+.card {
+    margin-top: 1rem;
+}
+.card-header {
+    cursor: pointer;
+} 

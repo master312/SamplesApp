@@ -1,0 +1,9 @@
+/* Basic styling for the toggle-camera button */
+#toggle-camera-button {
+    /* Add any specific styles for the button here */
+}
+
+#camera-icon {
+    width: 24px;
+    height: 24px;
+} 

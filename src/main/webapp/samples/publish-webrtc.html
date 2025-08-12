@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Publish</title>
+    <link rel="stylesheet" href="../../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/samples.css">
+    <script src="../js/external/adapter-latest.js"></script>
+    <script src="../js/external/chartjs/chart.umd.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/deepar@4.0.3/js/deepar.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <a href="../index.html" target="_top" class="btn btn-light back-button">← Back to Samples</a>
+            </div>
+        </div>
+        <div class="header clearfix">
+            <h3 class="text-muted">WebRTC Publish</h3>
+            <p>This sample demonstrates how to publish a WebRTC stream.</p>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                
+                <div class="video-container mb-3">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video-view id="video-preview" is-local show-controls="false" label="Preview"></video-view>
+                    </div>
+                </div>
+
+                <input-video-selector id="input-video-selector"></input-video-selector>
+                <input-audio-selector id="input-audio-selector"></input-audio-selector>
+
+                <stream-controls id="stream-controls" start-button-text="Start Publishing" stop-button-text="Stop Publishing"></stream-controls>
+                
+                <div class="d-flex justify-content-start mt-3 mb-3">
+                    <toggle-camera id="toggle-camera" class="mr-2"></toggle-camera>
+                    <toggle-microphone id="toggle-microphone"></toggle-microphone>
+                </div>
+
+                <virtual-background-manager id="virtual-background-manager"></virtual-background-manager>
+                
+                <deepar-effects-manager id="deepar-effects-manager" api-key="fdaad676ff58ff11f453db2d781073f105c94f14a8dc0f88c96049d4d20bf18aff2364181ac69a7a"></deepar-effects-manager>
+
+                <advanced-audio-publisher-settings id="advanced-audio-settings"></advanced-audio-publisher-settings>
+                <advanced-video-publisher-settings id="advanced-video-settings"></advanced-video-publisher-settings>
+                <data-channel-messaging id="data-channel"></data-channel-messaging>
+                <data-channel-file-share id="file-share" class="mt-3"></data-channel-file-share>
+                <msg-display id="msg-display"></msg-display>
+                <stream-publish-analytics id="stream-info"></stream-publish-analytics>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="../js/external/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import {WebRTCAdaptor} from '../js/ant-sdk/webrtc_adaptor.js';
+        import { BACKEND_URL } from '../js/samples-config.js';
+        import { getWebSocketURL } from '../js/ant-sdk/utility.js';
+        import '../components/video-view.js';
+        import '../components/input-video-selector.js';
+        import '../components/input-audio-selector.js';
+        import '../components/stream-controls.js';
+        import '../components/toggle-camera.js';
+        import '../components/toggle-microphone.js';
+        import '../components/advanced-audio-publisher-settings.js';
+        import '../components/advanced-video-publisher-settings.js';
+        import '../components/stream-publish-analytics.js';
+        import '../components/data-channel-messaging.js';
+        import '../components/data-channel-file-share.js';
+        import '../components/virtual-background-manager.js';
+        import '../components/deepar-effects-manager.js';
+        import '../components/msg-display.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoPreview = document.getElementById('video-preview');
+            const inputVideoSelector = document.getElementById('input-video-selector');
+            const inputAudioSelector = document.getElementById('input-audio-selector');
+            const streamControls = document.getElementById('stream-controls');
+            const toggleCamera = document.getElementById('toggle-camera');
+            const toggleMicrophone = document.getElementById('toggle-microphone');
+            const advancedAudioSettings = document.getElementById('advanced-audio-settings');
+            const advancedVideoSettings = document.getElementById('advanced-video-settings');
+            const streamInfo = document.getElementById('stream-info');
+            const dataChannel = document.getElementById('data-channel');
+            const fileShare = document.getElementById('file-share');
+            const virtualBackgroundManager = document.getElementById('virtual-background-manager');
+            const deeparEffectsManager = document.getElementById('deepar-effects-manager');
+            const msgDisplay = document.getElementById('msg-display');
+
+            var mediaConstraints = {
+                audio: {
+                    noiseSuppression: true,
+                    echoCancellation: true
+                },
+                video: true
+            };
+
+            const webRTCAdaptor = new WebRTCAdaptor({
+                websocket_url: getWebSocketURL(BACKEND_URL),
+                dataChannelEnabled: true,
+                mediaConstraints: mediaConstraints,
+            });
+
+            // Order of those two is important.
+            videoPreview.setup(webRTCAdaptor);
+            inputVideoSelector.setup(webRTCAdaptor);
+            inputAudioSelector.setup(webRTCAdaptor);
+            
+            streamControls.setup(webRTCAdaptor);
+            toggleCamera.setup(webRTCAdaptor);
+            toggleMicrophone.setup(webRTCAdaptor);
+            advancedAudioSettings.setup(webRTCAdaptor);
+            advancedVideoSettings.setup(webRTCAdaptor);
+            streamInfo.setup(webRTCAdaptor);
+            dataChannel.setup(webRTCAdaptor);
+            fileShare.setup(webRTCAdaptor);
+            deeparEffectsManager.setup(webRTCAdaptor);
+            msgDisplay.setup(webRTCAdaptor);
+
+            virtualBackgroundManager.setup(webRTCAdaptor);
+            virtualBackgroundManager.addBackgroundImage('AMS', '../img/samples/virtual-background.png');
+            virtualBackgroundManager.addBackgroundImage('Cloud', '../img/samples/cloud-background.png');
+
+
+            streamControls.addEventListener('start-stream', (e) => {
+                webRTCAdaptor.publish(e.detail.streamId);
+            });
+            
+            streamControls.addEventListener('stop-stream', (e) => {
+                webRTCAdaptor.stop(e.detail.streamId);
+            });
+
+            inputVideoSelector.addEventListener('input-changed-video', (e) => {
+                videoPreview.setStream(e.detail.stream);
+            });
+
+            inputAudioSelector.addEventListener('input-changed-audio', (e) => {
+                videoPreview.setStream(e.detail.stream);
+            });
+
+            inputVideoSelector.addEventListener('error', (e) => {
+                console.error(e.detail.message);
+                alert(`Error: ${e.detail.name} - ${e.detail.message}`);
+            });
+
+            inputAudioSelector.addEventListener('error', (e) => {
+                console.error(e.detail.message);
+                alert(`Error: ${e.detail.name} - ${e.detail.message}`);
+            });
+        });
+    </script>
+</body>
+</html>

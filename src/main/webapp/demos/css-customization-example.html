@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Customization Example</title>
+    
+    <!-- Load the CSS configuration FIRST -->
+    <script src="../AntMediaCSSConfig.js"></script>
+    
+    <!-- Override default CSS paths for customization -->
+    <script>
+        // Customize component styles - paths are used exactly as provided
+        window.AntMediaConfig.componentStyles['stream-controls'] = './custom-styles/my-stream-controls.css';
+        window.AntMediaConfig.componentStyles['data-channel-messaging'] = './custom-styles/my-messaging.css';
+        
+        // You can also customize Bootstrap and common CSS
+        window.AntMediaConfig.commonStyles.bootstrap = './custom-styles/my-bootstrap.css';
+        window.AntMediaConfig.commonStyles['component-common'] = './custom-styles/my-common.css';
+        
+        console.log('CSS Configuration:', window.AntMediaConfig);
+    </script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>CSS Customization Example</h1>
+        <p>This example shows how to customize component styles using the global configuration.</p>
+        
+        <!-- Components will automatically use custom CSS paths -->
+        <stream-controls></stream-controls>
+        <data-channel-messaging></data-channel-messaging>
+    </div>
+
+    <!-- Load components AFTER configuration -->
+    <script type="module" src="../components/stream-controls.js"></script>
+    <script type="module" src="../components/data-channel-messaging.js"></script>
+</body>
+</html> 

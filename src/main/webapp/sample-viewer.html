@@ -1,0 +1,115 @@
+<!-- This is the sample viewer page. It is used to view the samples, with side-menu and iframe. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media Server - New Examples</title>
+    <link rel="stylesheet" href="css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div id="sidebar">
+            <h4>Ant Media Examples</h4>
+            <ul id="samples-menu" class="nav flex-column">
+                <!-- Menu items are injected here by JS below -->
+            </ul>
+        </div>
+        <div id="content">
+            <iframe id="sample-frame"></iframe>
+        </div>
+    </div>
+
+    <script type="module">
+        import { samples } from './js/samples-list.js';
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const sampleFrame = document.getElementById('sample-frame');
+            const samplesMenu = document.getElementById('samples-menu');
+
+            let menuHTML = `<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>`;
+            
+            const groupedSamples = samples.reduce((acc, sample) => {
+                const categoryId = sample.category.id;
+                if (!acc[categoryId]) {
+                    acc[categoryId] = {
+                        ...sample.category,
+                        samples: []
+                    };
+                }
+                acc[categoryId].samples.push(sample);
+                return acc;
+            }, {});
+
+            for (const categoryId in groupedSamples) {
+                const category = groupedSamples[categoryId];
+                if (category.showInSamplesViewMenu === false) {
+                    continue;
+                }
+                menuHTML += `<li><div class="nav-category"><img src="${category.icon}" class="nav-category-icon" alt=""> ${category.title}</div>`;
+                
+                let itemsHTML = '<ul class="nav flex-column nav-category-items">';
+                category.samples.forEach(sample => {
+                    itemsHTML += `
+                        <li class="nav-item">
+                            <div class="nav-item-container">
+                                <a class="nav-link" href="?sample=${sample.link}">${sample.name}</a>
+                            </div>
+                        </li>`;
+                });
+                itemsHTML += '</ul></li>';
+                menuHTML += itemsHTML;
+            }
+
+            samplesMenu.innerHTML = menuHTML;
+
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .nav-category-icon {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 8px;
+                    vertical-align: text-bottom;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Category Collapse functionality
+            samplesMenu.addEventListener('click', function(event) {
+                const header = event.target.closest('.nav-category');
+                if (header) {
+                    const list = header.nextElementSibling;
+                    if (list && list.classList.contains('nav-category-items')) {
+                        header.classList.toggle('collapsed');
+                        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+                    }
+                    return; // Prevent other handlers
+                }
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            function loadSample() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let sampleFile = urlParams.get('sample') || 'samples-home.html';
+                sampleFrame.src = sampleFile;
+                
+                // Highlight the active link
+                navLinks.forEach(link => {
+                    const linkParam = new URL(link.href).searchParams.get('sample');
+                    if (linkParam === sampleFile) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            // On load...
+            loadSample();
+        });
+    </script>
+</body>
+</html> 

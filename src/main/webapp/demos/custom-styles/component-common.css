@@ -1,0 +1,177 @@
+/* Custom common styles for components - Ant Media Red & White Theme */
+
+/* Common form styles used across components */
+.custom-input-group {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 1rem !important;
+    border: 2px solid rgba(255, 68, 68, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-input-group:focus-within {
+    border-color: rgba(255, 68, 68, 0.3) !important;
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.15) !important;
+}
+
+.custom-input-group-text {
+    background: linear-gradient(135deg, #ff4444, #cc0000) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    padding: 12px 16px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    font-size: 0.9rem !important;
+}
+
+.custom-form-control {
+    background: white !important;
+    border: none !important;
+    color: #333 !important;
+    padding: 12px 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    font-size: 1rem !important;
+}
+
+.custom-form-control:focus {
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #333 !important;
+    outline: none !important;
+}
+
+.custom-form-control::placeholder {
+    color: #adb5bd !important;
+    opacity: 1 !important;
+}
+
+/* Button styles */
+.custom-btn {
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    min-width: 140px !important;
+}
+
+.custom-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.custom-btn:hover:before {
+    left: 100%;
+}
+
+.custom-btn-primary {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
+}
+
+.custom-btn-primary:hover {
+    background: linear-gradient(135deg, #218838, #17a2b8) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+}
+
+.custom-btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: white !important;
+}
+
+.custom-btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+}
+
+.custom-btn-secondary {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+    color: #495057 !important;
+    border: 2px solid #dee2e6 !important;
+}
+
+.custom-btn-secondary:hover {
+    background: linear-gradient(135def, #e9ecef, #dee2e6) !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.2) !important;
+}
+
+/* Stream status badges */
+.stream-status-online {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4) !important;
+    font-size: 0.875rem !important;
+}
+
+.stream-status-offline {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+    font-size: 0.875rem !important;
+}
+
+/* Ant Media Brand Colors */
+.ant-media-primary {
+    color: #ff4444 !important;
+}
+
+.ant-media-bg-primary {
+    background: linear-gradient(135deg, #ff4444, #cc0000) !important;
+}
+
+.ant-media-border-primary {
+    border-color: #ff4444 !important;
+}
+
+/* Animation utilities */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

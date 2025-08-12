@@ -1,0 +1,24 @@
+:host {
+    display: block;
+    margin-top: 1rem;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+.stat-item {
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: .25rem;
+}
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.chart-wrapper {
+    height: 200px;
+} 

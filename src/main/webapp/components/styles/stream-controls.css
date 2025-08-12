@@ -1,0 +1,6 @@
+/* :host is a pseudo-class that styles the component's root element */
+:host {
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+} 
