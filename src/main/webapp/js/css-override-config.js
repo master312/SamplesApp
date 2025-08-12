@@ -1,5 +1,5 @@
 /**
- * AntMediaCSSConfig - Global CSS configuration for all Ant Media components
+ * css-override-config - Global CSS configuration for all Ant Media components
  * Allows customization of component styles by overriding default paths
  */
 

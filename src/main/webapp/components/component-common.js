@@ -15,7 +15,7 @@ class ComponentCommon {
         if (window.AntMediaConfig?.commonStyles?.bootstrap) {
             return window.AntMediaConfig.commonStyles.bootstrap;
         }
-        return '../../css/external/bootstrap4/bootstrap.min.css';
+        return '../css/external/bootstrap4/bootstrap.min.css';
     }
     
     static getCommonCss() {
@@ -30,7 +30,7 @@ class ComponentCommon {
         if (window.AntMediaConfig?.iconsPath) {
             return window.AntMediaConfig.iconsPath;
         }
-        return '../../css/external/icons/';
+        return '../css/external/icons/';
     }
 
     // TODO: Maybe move to component-utils.js or something?

@@ -39,7 +39,7 @@ Sample demonstrations using these components can be found in the `src/main/webap
  - The HTML & JS source for web examples and re-usable components is located in `/src/main/webapp/`
 
 ### Basic Component Usage
-Components can be styled by setting `AntMediaCSSConfig.js` configuration, or by overriding CSS paths directly on top of HTML file. See `samples/css-customization.html` for examples.
+Components can be styled by setting `css-override-config.js` configuration, or by overriding CSS paths directly on top of HTML file. See `samples/css-customization.html` for examples.
 
 1. Setup custom styling based on exmaple
 2. Import components as ES6 modules: `import { ComponentName } from './components/component-name.js'`
@@ -52,9 +52,9 @@ All components use CSS that can be overriden. Default CSS files are stored in `.
 
 ```html
 <!-- Load config first -->
-<script src="src/main/webapp/AntMediaCSSConfig.js"></script>
+<script src="src/main/webapp/js/css-override-config.js"></script>
 
-<!-- Override default paths, or create your own custom AntMediaCSSConfig based on exisitng exmaple-->
+<!-- Override default paths, or create your own custom css-override-config based on exisitng exmaple-->
 <script>
   window.AntMediaConfig.componentStyles['stream-controls'] = './my-custom.css';
 </script>
