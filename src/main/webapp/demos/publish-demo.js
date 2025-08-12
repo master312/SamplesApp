@@ -1,9 +1,11 @@
-import {WebRTCAdaptor} from '../js/ant-sdk/webrtc_adaptor.js';
+import { WebRTCAdaptor } from '../js/ant-sdk/webrtc_adaptor.js';
+import { SamplesConfig } from '../js/samples-config.js';
+import { getWebSocketURL } from '../js/ant-sdk/utility.js';
 import '../components/video-view.js';
 import '../components/stream-controls.js';
 import '../components/toggle-camera.js';
 import '../components/toggle-microphone.js';
-import {PublishDemoModal} from './publish-demo-modal.js';
+import { PublishDemoModal } from './publish-demo-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     const videoPreview = document.getElementById('video-preview');
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const webRTCAdaptor = new WebRTCAdaptor({
-        websocket_url: "ws://localhost:5080/WebRTCAppEE/websocket",
+        websocket_url: getWebSocketURL(SamplesConfig.getBackendUrl()),
         localVideoElement: document.createElement('video'), 
         dataChannelEnabled: true,
         mediaConstraints: mediaConstraints,
@@ -41,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Watch stream button functionality
     watchStreamButton.addEventListener('click', () => {
-        const playUrl = `http://localhost:5080/WebRTCAppEE/play.html?id=${streamControls.getStreamId()}&autoplay=true&mute=true`;
+        const playUrl = `${SamplesConfig.getBackendUrl()}play.html?id=${streamControls.getStreamId()}&autoplay=true&mute=true`;
         window.open(playUrl, '_blank');
     });
 

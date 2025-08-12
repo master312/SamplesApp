@@ -2,7 +2,10 @@
 
 export class SamplesConfig {
     static getBackendUrl() {
-        return new URL("http://localhost:5080/WebRTCAppEE/");
+        const parts = location.pathname.split("/").filter(Boolean);
+        const rootUrl = `${location.origin}/${parts[0]}/`;
+
+        return new URL(rootUrl);
     }
 
     static getConferenceUrl() {
