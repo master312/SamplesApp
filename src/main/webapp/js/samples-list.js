@@ -1,47 +1,57 @@
-import { createSampleHomeCard, createSampleHomeCardNoImage } from './sample-home-card.js';
-import { SamplesConfig } from './samples-config.js';
+import { createSampleHomeCard, createSampleHomeCardNoImage } from "./sample-home-card.js";
+import { SamplesConfig } from "./samples-config.js";
 
-const SAMPLES_DIR = 'samples/';
-const DEMOS_DIR = 'demos/';
-const IMG_DIR = 'img/samples/';
-const ICONS_DIR = 'css/external/icons/';
+const SAMPLES_DIR = "samples/";
+const DEMOS_DIR = "demos/";
+const IMG_DIR = "img/samples/";
+const ICONS_DIR = "css/external/icons/";
 
 const CATEGORIES = {
     BASIC: {
-        id: 'basic',
-        title: 'Demo Samples',
+        id: "basic",
+        title: "Demo Samples",
         icon: `${ICONS_DIR}joystick.svg`,
     },
     LIVE_APPS: {
-        id: 'live-apps',
-        title: 'Applications',
+        id: "live-apps",
+        title: "Applications",
         icon: `${ICONS_DIR}cast.svg`,
         showInSamplesViewMenu: false,
     },
     ADVANCED: {
-        id: 'advanced',
-        title: 'Advanced Scenarios',
+        id: "advanced",
+        title: "Advanced Scenarios",
         icon: `${ICONS_DIR}gear-wide-connected.svg`,
     }
 };
 
 const TAGS = {
-    WEBRTC: { title: 'WebRTC', color: '#007bff' },
-    PUBLISH: { title: 'Publish', color: '#28a745' },
-    PLAY: { title: 'Play', color: '#17a2b8' },
-    AUDIO: { title: 'Audio', color: '#ffc107' },
-    VIDEO: { title: 'Video', color: '#dc3545' },
-    VIRTUAL_BACKGROUND: { title: 'Virtual Background', color: '#6f42c1' },
-    DEEPAR: { title: 'DeepAR', color: '#fd7e14' },
-    VOD: { title: 'VOD', color: '#6c757d' },
+    WEBRTC: { title: "WebRTC", color: "#007bff" },
+    PUBLISH: { title: "Publish", color: "#28a745" },
+    PLAY: { title: "Play", color: "#17a2b8" },
+    AUDIO: { title: "Audio", color: "#ffc107" },
+    VIDEO: { title: "Video", color: "#dc3545" },
+    VIRTUAL_BACKGROUND: { title: "Virtual Background", color: "#6f42c1" },
+    DEEPAR: { title: "DeepAR", color: "#fd7e14" },
+    VOD: { title: "VOD", color: "#6c757d" },
 };
 
 export const samples = [
     {
+        name: "Publish live broadcast",
+        link: `${DEMOS_DIR}publish-demo.html`,
+        category: CATEGORIES.LIVE_APPS,
+        description: "Publish broadcast from browser to ant-media-server over WebRTC.",
+        image: `${IMG_DIR}publish-demo.png`,
+        onHoverMedia: `${IMG_DIR}publish-demo.mp4`,
+        tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
+        homeCardFactory: createSampleHomeCard,
+    },
+    {
         name: "Conference",
         link: SamplesConfig.getConferenceUrl(),
         category: CATEGORIES.LIVE_APPS,
-        description: "Join a multi-party conference call. (Placeholder)",
+        description: "Join a multi-party conference call. <br /><b>Requires Conference app to be installed!</b>",
         image: `${IMG_DIR}conference.png`,
         onHoverMedia: `${IMG_DIR}/conference_hover.mp4`,
         tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
@@ -54,20 +64,10 @@ export const samples = [
     //     category: CATEGORIES.LIVE_DEMO,
     //     description: "Publish and watch in a webinar setting. (Placeholder)",
     //     image: `${IMG_DIR}webinar.png`,
-    //     // onHoverMedia: 'img/samples/webinar_hover.mp4',
+    //     // onHoverMedia: "img/samples/webinar_hover.mp4",
     //     tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
     //     homeCardFactory: createSampleHomeCard,
     // },
-    {
-        name: "Broadcast Live",
-        link: `${DEMOS_DIR}publish-demo.html`,
-        category: CATEGORIES.LIVE_APPS,
-        description: "Publish and watch in a webinar setting. (Placeholder)",
-        image: `${IMG_DIR}publish-demo.png`,
-        onHoverMedia: `${IMG_DIR}publish-demo.mp4`,
-        tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
-        homeCardFactory: createSampleHomeCard,
-    },
     {
         name: "Play WebRTC",
         link: `${SAMPLES_DIR}play-webrtc.html`,
@@ -139,21 +139,21 @@ export const samples = [
         homeCardFactory: createSampleHomeCardNoImage,
     },
     {
-        name: 'Collaborative Drawing - Publish',
-        link: 'samples/canvas-publish.html',
+        name: "Collaborative Drawing - Publish",
+        link: "samples/canvas-publish.html",
         useSampleViewer: true,
         category: CATEGORIES.BASIC,
-        description: 'A sample that demonstrates real-time collaborative drawing on top of a video stream.',
+        description: "A sample that demonstrates real-time collaborative drawing on top of a video stream.",
         image: `${IMG_DIR}play_audio.png`,
         tags: [],
         homeCardFactory: createSampleHomeCardNoImage,
     },
     {
-        name: 'Collaborative Drawing - Play',
-        link: 'samples/canvas-play.html',
+        name: "Collaborative Drawing - Play",
+        link: "samples/canvas-play.html",
         useSampleViewer: true,
         category: CATEGORIES.BASIC,
-        description: 'A sample that demonstrates real-time collaborative drawing on top of a video stream.',
+        description: "A sample that demonstrates real-time collaborative drawing on top of a video stream.",
         image: `${IMG_DIR}play_audio.png`,
         tags: [],
         homeCardFactory: createSampleHomeCardNoImage,
