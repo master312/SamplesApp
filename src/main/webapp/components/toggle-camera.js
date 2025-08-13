@@ -41,6 +41,8 @@ class ToggleCameraButton extends HTMLElement {
 
     setup(adaptor) {
         this._adaptor = adaptor;
+        this.isCameraOn = this._adaptor?.mediaManager?.cameraEnabled ?? true;
+        this._updateUI();
     }
 
     toggleCamera() {
