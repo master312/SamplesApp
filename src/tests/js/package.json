@@ -1,0 +1,17 @@
+{
+  "name": "antmedia-samples-web-tests",
+  "version": "1.0.0",
+  "description": "Unit tests for Ant Media Server Web Components",
+  "private": true,
+  "scripts": {
+    "test": "node run-tests.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
