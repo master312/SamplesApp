@@ -51,7 +51,7 @@ export const samples = [
         name: "Conference",
         link: SamplesConfig.getConferenceUrl(),
         category: CATEGORIES.LIVE_APPS,
-        description: "Join a multi-party conference call. <br /><b>Requires Conference app to be installed!</b>",
+        description: "Join a multi-party conference call using Circles app <br /><b>Requires Conference app to be installed!</b>",
         image: `${IMG_DIR}conference.png`,
         onHoverMedia: `${IMG_DIR}/conference_hover.mp4`,
         tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],

@@ -9,6 +9,6 @@ export class SamplesConfig {
     }
 
     static getConferenceUrl() {
-        return new URL("http://localhost:5080/Conference/");
+        return new URL(`${location.origin}/circleTest/`);
     }
   }
