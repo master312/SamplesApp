@@ -5,14 +5,6 @@ This app demonstrates ant-media-server capabilities.
 Project also provides reusable Web Components for building WebRTC applications with Ant Media Server. 
 Sample demonstrations using these components can be found in the `src/main/webapp/samples/` directory.
 
-### TODO:
-- Fix 'stream-simple-state' bugs
-
-- Custom selector instead of \<select\> for dropdowns? So that it can be customised?
-- URL Parameter Handling?
-- Detailed docs for components?
-- Better organize simples or something?
-
 ---
 
 ## Table of Contents
@@ -105,3 +97,6 @@ All components use CSS that can be overriden. Default CSS files are stored in `.
 
 ---
 
+### Future improvements:
+- Improve 'stream-simple-state' component
+- Custom selector instead of \<select\> for dropdowns, So that it can be customised
