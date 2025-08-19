@@ -28,14 +28,17 @@ class VideoView extends HTMLElement {
     }
 
     connectedCallback() {
+        if (this.hasAttribute('muted')) {
+            this.videoElement.muted = true;
+        } else {
+            // Unmute by default for remote videos
+            this.videoElement.muted = false;
+        }
+
         // 'is-local' attribute indicated that the video source
         // is the user's own camera, in which case we mute sound
         if (this.hasAttribute('is-local')) {
             this._isLocal = true;
-            this.videoElement.muted = true;
-        }
-
-        if (this.hasAttribute('muted')) {
             this.videoElement.muted = true;
         }
 

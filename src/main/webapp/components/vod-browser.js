@@ -1,5 +1,6 @@
 /**
  * Displays paged grid of VOD files with optional delete functionality.
+ * Uses REST api to fetch VODs.
  * 
  * @event vod-selected - Fired when a VOD is selected. Detail contains the VOD object.
  * @event vod-deleted - Fired when a VOD is successfully deleted. Detail contains the deleted VOD object.
@@ -158,6 +159,7 @@ class VodBrowser extends HTMLElement {
 
     refresh() {
         if (!this._backendUrl) {
+            this._dispatchErrorEvent(new Error("Backend URL is required attribute."));
             return;
         }
         this._currentPage = 0;

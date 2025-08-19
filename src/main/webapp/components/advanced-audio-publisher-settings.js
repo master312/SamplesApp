@@ -53,6 +53,20 @@ class AdvancedAudioPublisherSettings extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(templateHtml.content.cloneNode(true));
         this._adaptor = null;
+        this._applyDelayMs = 1000;
+    }
+
+    static get observedAttributes() {
+        return ['apply-delay-ms'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'apply-delay-ms') {
+            const delay = parseInt(newValue, 10);
+            if (!isNaN(delay)) {
+                this._applyDelayMs = delay;
+            }
+        }
     }
 
     connectedCallback() {
@@ -97,7 +111,7 @@ class AdvancedAudioPublisherSettings extends HTMLElement {
             if (info === "publish_started") {
                 setTimeout(() => {
                     this._applyCurrentSettings();
-                }, 1500);
+                }, this._applyDelayMs);
             }
         });
     }

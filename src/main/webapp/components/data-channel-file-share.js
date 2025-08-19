@@ -94,6 +94,7 @@ class DataChannelFileShare extends HTMLElement {
                 window.open(file.url, '_blank');
             }
         };
+        this._updateUI();
     }
 
     setup(adaptor, streamId = null) {

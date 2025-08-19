@@ -84,8 +84,10 @@ class InputVideoSelector extends HTMLElement {
             
             this.videoSourceElement.innerHTML = '';
             
+            let unlabeledCount = 1;
             videoInputs.forEach(device => {
-                this.videoSourceElement.add(new Option(device.label || `Camera ${this.videoSourceElement.length + 1}`, device.deviceId));
+                const label = device.label || `Camera ${unlabeledCount++}`;
+                this.videoSourceElement.add(new Option(label, device.deviceId));
             });
 
             if (navigator.mediaDevices.getDisplayMedia) {
@@ -94,7 +96,6 @@ class InputVideoSelector extends HTMLElement {
             }
 
             this.videoSourceElement.add(new Option('No Video', 'none'));
-            await this._handleVideoSourceChange();
 
         } catch (error) {
             console.error('Error populating video devices:', error);

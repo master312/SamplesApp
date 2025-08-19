@@ -28,7 +28,6 @@ class ToggleMicrophoneButton extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this._adaptor = null;
-        this.isMicrophoneOn = true;
     }
 
     connectedCallback() {
@@ -41,6 +40,11 @@ class ToggleMicrophoneButton extends HTMLElement {
     
     setup(adaptor) {
         this._adaptor = adaptor;
+        this._updateUI();
+    }
+
+    getIsMicOn() {
+        return this._adaptor?.mediaManager ? !this._adaptor.mediaManager.isMuted : false;
     }
 
     toggleMicrophone() {
@@ -49,17 +53,18 @@ class ToggleMicrophoneButton extends HTMLElement {
             return;
         }
 
-        if (this.isMicrophoneOn) {
+        if (this.getIsMicOn()) {
             this._adaptor.muteLocalMic();
         } else {
             this._adaptor.unmuteLocalMic();
         }
-        this.isMicrophoneOn = !this.isMicrophoneOn;
         this._updateUI();
     }
 
     _updateUI() {
-        if (this.isMicrophoneOn) {
+        const isMicOn = this.getIsMicOn();
+        
+        if (isMicOn) {
             this.toggleButton.title = 'Mute Microphone';
             this.microphoneIcon.src = `${iconsPath}mic-fill.svg`;
             this.microphoneIcon.alt = 'Microphone On';

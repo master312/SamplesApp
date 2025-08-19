@@ -53,6 +53,7 @@ class DataChannelMessaging extends HTMLElement {
         this.shadowRoot.getElementById('data-message').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this._sendData();
         });
+        this._updateUI();
     }
 
     setup(adaptor) {

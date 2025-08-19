@@ -38,8 +38,19 @@ class DeeparEffectsManager extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._adaptor = null;
-        this.apiKey = this.getAttribute('api-key');
-        this.hideButton = this.hasAttribute('hide-apikey-button');
+        this.apiKey = null;
+    }
+
+    static get observedAttributes() {
+        return ['api-key', 'hide-apikey-button'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'api-key' && oldValue !== newValue) {
+            this.setApiKey(newValue);
+        } else if (name === 'hide-apikey-button') {
+            this.apiKeyButton.style.display = newValue !== null ? 'none' : '';
+        }
     }
 
     connectedCallback() {
@@ -49,8 +60,10 @@ class DeeparEffectsManager extends HTMLElement {
         this.effectSelector.addEventListener('change', this._onEffectChange.bind(this));
         this.apiKeyButton.addEventListener('click', this._onSetApikeyClick.bind(this));
         
-        if (this.hideButton) {
-            this.apiKeyButton.style.display = 'none';
+        this.apiKeyButton.style.display = this.hasAttribute('hide-apikey-button') ? 'none' : '';
+        
+        if (!this.apiKey && this.hasAttribute('api-key')) {
+            this.setApiKey(this.getAttribute('api-key'));
         }
     }
 
@@ -80,8 +93,10 @@ class DeeparEffectsManager extends HTMLElement {
     }
 
     stop() {
-        this._adaptor.enableEffect(VideoEffect.NO_EFFECT);
-        this.effectSelector.value = VideoEffect.NO_EFFECT;
+        if (this._adaptor) {
+            this._adaptor.enableEffect(VideoEffect.NO_EFFECT);
+            this.effectSelector.value = VideoEffect.NO_EFFECT;
+        }
     }
 
     _populateEffects(effectsList) {
@@ -90,7 +105,7 @@ class DeeparEffectsManager extends HTMLElement {
         effectsList.forEach(effect => {
             const option = document.createElement('option');
             option.value = effect;
-            option.textContent = effect.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            option.textContent = effect.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
             this.effectSelector.appendChild(option);
         });
     }

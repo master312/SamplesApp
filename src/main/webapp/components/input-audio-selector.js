@@ -56,7 +56,7 @@ class InputAudioSelector extends HTMLElement {
         if (!stream || !this._mediaManager) return;
 
         if (audioDeviceId !== 'none') {
-            await this._webRTCAdaptor.switchAudioInputSource(this._webRTCAdaptor.publishStreamId, audioDeviceId);
+            await this._webRTCAdaptor?.switchAudioInputSource(this._webRTCAdaptor.publishStreamId, audioDeviceId);
         } else {
             this._removeAudioTrack(stream);
         }
@@ -81,8 +81,10 @@ class InputAudioSelector extends HTMLElement {
 
             this.audioSource.innerHTML = '';
 
+            let unlabeledCount = 1;
             audioInputs.forEach(device => {
-                this.audioSource.add(new Option(device.label || `Microphone ${this.audioSource.length + 1}`, device.deviceId));
+                const label = device.label || `Microphone ${unlabeledCount++}`;
+                this.audioSource.add(new Option(label, device.deviceId));
             });
             
             this.audioSource.add(new Option('No Audio', 'none'));
