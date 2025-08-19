@@ -57,7 +57,7 @@ class VodBrowser extends HTMLElement {
             this._backendUrl = newValue ? newValue.replace(/\/$/, '') : '';
         }
 
-        if (oldValue !== newValue) {
+        if (oldValue !== newValue && this._backendUrl) {
             this.refresh();
         }
     }
@@ -73,7 +73,9 @@ class VodBrowser extends HTMLElement {
         this.shadowRoot.getElementById('refresh-button').addEventListener('click', () => this.refresh());
         this.shadowRoot.getElementById('search-input').addEventListener('input', (e) => this._handleSearchChange(e));
 
-        this.refresh();
+        if (this._backendUrl) {
+            this.refresh();
+        }
     }
     
     _handleVodClick(event) {
