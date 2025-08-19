@@ -153,6 +153,11 @@ class BroadcastBrowser extends HTMLElement {
 
             const broadcasts = await this._toJson(response);
             this._allBroadcasts = broadcasts || [];
+            
+            // Clear existing item elements when fetching new data
+            const listElement = this.shadowRoot.getElementById('broadcast-list');
+            listElement.innerHTML = '';
+            
             this._renderBroadcasts();
         } catch (error) {
             this._dispatchErrorEvent(error);
@@ -185,24 +190,53 @@ class BroadcastBrowser extends HTMLElement {
 
     _renderBroadcasts() {
         const listElement = this.shadowRoot.getElementById('broadcast-list');
-        listElement.innerHTML = '';
         
-        const filteredBroadcasts = this._getFilteredBroadcasts();
-
-        if (!filteredBroadcasts || filteredBroadcasts.length === 0) {
-            listElement.innerHTML = '<div class="no-broadcasts-message">No broadcasts found.</div>';
-            return;
+        // If no broadcasts loaded yet, create them all
+        if (listElement.children.length === 0 && this._allBroadcasts.length > 0) {
+            this._createAllBroadcastElements();
         }
         
+        const filteredBroadcasts = this._getFilteredBroadcasts();
         const startIndex = this._currentPage * this.pageSize;
         const endIndex = startIndex + this.pageSize;
-        const broadcastsToRender = filteredBroadcasts.slice(startIndex, endIndex);
+        const broadcastsToShow = filteredBroadcasts.slice(startIndex, endIndex);
 
-        console.log('Got broadcasts:', broadcastsToRender);
-        broadcastsToRender.forEach(broadcast => {
+        // Hide all broadcast items on spawn
+        Array.from(listElement.children).forEach(item => {
+            if (item.classList.contains('broadcast-item')) {
+                item.style.display = 'none';
+            }
+        });
+
+        // Remove any existing no-broadcasts message
+        const existingMessage = listElement.querySelector('.no-broadcasts-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        if (broadcastsToShow.length === 0) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'no-broadcasts-message';
+            messageDiv.textContent = 'No broadcasts found.';
+            listElement.appendChild(messageDiv);
+            return;
+        }
+
+        // Show broadcast for cur page
+        broadcastsToShow.forEach(broadcast => {
+            const item = listElement.querySelector(`[data-stream-id="${broadcast.streamId}"]`);
+            if (item) item.style.display = '';
+        });
+    }
+
+    _createAllBroadcastElements() {
+        const listElement = this.shadowRoot.getElementById('broadcast-list');
+        
+        this._allBroadcasts.forEach(broadcast => {
             const item = document.createElement('div');
             item.className = 'broadcast-item';
             item.dataset.broadcast = JSON.stringify(broadcast);
+            item.dataset.streamId = broadcast.streamId;
 
             const thumbnailUrl = `${this._backendUrl}/previews/${broadcast.streamId}.png`;
             const copyIconUrl = ComponentCommon.getIconsBootstrapPath() + 'copy.svg';
