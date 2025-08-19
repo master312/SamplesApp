@@ -13,9 +13,39 @@
     
     <script src="/js/css-override-config.js"></script>
     
+    <!-- Dependencies for components not to complain -->
+    <script src="/js/external/jquery-3.7.1.min.js"></script>
+    <script src="/js/external/bootstrap.bundle.min.js"></script>
+
     <script type="module">
-        // Import all components used in tests here
+        // Import components used in tests
+        
         import '/components/toggle-camera.js';
+        import '/components/stream-controls.js';
+        import '/components/data-channel-messaging.js';
+        import '/components/data-channel-file-share.js';
+        import '/components/toggle-microphone.js';
+        import '/components/video-view.js';
+        import '/components/resolution-selector.js';
+        import '/components/input-video-selector.js';
+        import '/components/input-audio-selector.js';
+        import '/components/vod-uploader.js';
+        import '/components/virtual-background-manager.js';
+        import '/components/vod-browser.js';
+        import '/components/broadcast-browser.js';
+        import '/components/deepar-effects-manager.js';
+        import '/components/msg-display.js';
+        import '/components/advanced-video-publisher-settings.js';
+        import '/components/advanced-audio-publisher-settings.js';
+
+        // TODO:
+        // import '/components/stream-play-analytics.js';
+        // import '/components/stream-publish-analytics.js';
+
+
+        // Requires integraiton tests. No point testing with unit
+        // import '/components/collaborative-canvas.js';
+
     </script>
 </body>
 </html> 

@@ -103,6 +103,12 @@ async function runTests() {
     const browser = await chromium.launch(launchOptions);
     const page = await browser.newPage();
     
+    // Capture console output from browser
+    page.on('console', msg => {
+        // TODO: Maybe log theese to separate file to get rid of message spam in console
+        console.log(`[BROWSER] ${msg.type()}: ${msg.text()}`);
+    });
+    
     try {
         const testUrl = `http://localhost:${port}/tests/test-runner.html`;
         await page.goto(testUrl);
@@ -114,6 +120,10 @@ async function runTests() {
         
         await page.addScriptTag({
             url: `http://localhost:${port}/tests/common/webrtc-adaptor-mock.js`
+        });
+        
+        await page.addScriptTag({
+            url: `http://localhost:${port}/tests/common/fetch-mock.js`
         });
         
         console.log('DOM environment ready, running tests...');
