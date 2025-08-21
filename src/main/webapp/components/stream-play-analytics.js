@@ -83,6 +83,10 @@ class StreamPlayAnalytics extends HTMLElement {
     }
 
     _initCharts() {
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js is not available. Charts will not be displayed.');
+            return;
+        }
         this._bitrateChart = new Chart(this.shadowRoot.getElementById('bitrate-chart'), {
             type: 'line',
             data: {
@@ -137,8 +141,13 @@ class StreamPlayAnalytics extends HTMLElement {
 
     _updateStats(stats) {
         this.shadowRoot.getElementById('avg-bitrate').textContent = stats.averageIncomingBitrate || 'N/A';
-        this.shadowRoot.getElementById('packet-loss').textContent = (parseInt(stats.videoPacketsLost) + parseInt(stats.audioPacketsLost)) || 'N/A';
-        this.shadowRoot.getElementById('jitter').textContent = ((parseFloat(stats.videoJitterAverageDelay) + parseFloat(stats.audioJitterAverageDelay)) / 2).toPrecision(3) || 'N/A';
+
+        const totalPacketLoss = parseInt(stats.videoPacketsLost) + parseInt(stats.audioPacketsLost);
+        this.shadowRoot.getElementById('packet-loss').textContent = isNaN(totalPacketLoss) ? 'N/A' : totalPacketLoss;
+
+        const avgJitter = (parseFloat(stats.videoJitterAverageDelay) + parseFloat(stats.audioJitterAverageDelay)) / 2;
+        this.shadowRoot.getElementById('jitter').textContent = isNaN(avgJitter) ? 'N/A' : avgJitter.toPrecision(3);
+
         this.shadowRoot.getElementById('resolution').textContent = stats.frameWidth && stats.frameHeight ? `${stats.frameWidth}x${stats.frameHeight}` : 'N/A';
         this.shadowRoot.getElementById('fps').textContent = this._currentFPS || 'N/A';
 
@@ -148,21 +157,30 @@ class StreamPlayAnalytics extends HTMLElement {
 
     _calculatePlayFPS(stats) {
         const now = Date.now();
-        if (this._lastFrameCount && this._lastFrameTime && stats.framesReceived) {
-            const framesDelta = stats.framesReceived - this._lastFrameCount;
+        const framesReceived = stats.framesReceived;
+
+        if (!Number.isFinite(framesReceived)) {
+            // we don't have a valid number for frames received yet
+            return 'N/A';
+        }
+
+        if (this._lastFrameTime > 0) {
+            // we have previous frame count and timestamp, calculate FPS.
+            const framesDelta = framesReceived - this._lastFrameCount;
             const timeDelta = now - this._lastFrameTime;
+
             if (timeDelta > 0) {
                 const fps = (framesDelta / timeDelta) * 1000;
-                this._lastFrameCount = stats.framesReceived;
+                this._lastFrameCount = framesReceived;
                 this._lastFrameTime = now;
                 return fps.toPrecision(3);
             }
         }
-        if (stats.framesReceived) {
-            this._lastFrameCount = stats.framesReceived;
-            this._lastFrameTime = now;
-        }
-        return 'N/A';
+        
+        // else, set the baseline for the next calculation.
+        this._lastFrameCount = framesReceived;
+        this._lastFrameTime = now;
+        return 'N/A'; // Return N/A on the first run
     }
 
     _updateCurrentBitrate(bitrate) {
@@ -177,6 +195,9 @@ class StreamPlayAnalytics extends HTMLElement {
     }
 
     _updateCharts(stats) {
+        if (!this._bitrateChart || !this._fpsChart) {
+            return;
+        }
         const secondsElapsed = Math.floor((Date.now() - this._startTime) / 1000);
         const timeLabel = `${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')}`;
         const maxPoints = 60;

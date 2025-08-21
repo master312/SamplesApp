@@ -86,6 +86,10 @@ class StreamPublishAnalytics extends HTMLElement {
     }
 
     _initCharts() {
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js is not available. Charts will not be displayed.');
+            return;
+        }
         this._bitrateChart = new Chart(this.shadowRoot.getElementById('bitrate-chart'), {
             type: 'line',
             data: {
@@ -138,9 +142,16 @@ class StreamPublishAnalytics extends HTMLElement {
 
     _updateStats(stats) {
         this.shadowRoot.getElementById('avg-bitrate').textContent = stats.averageOutgoingBitrate || 'N/A';
-        this.shadowRoot.getElementById('packet-loss').textContent = (parseInt(stats.videoPacketsLost) + parseInt(stats.audioPacketsLost)) || 'N/A';
-        this.shadowRoot.getElementById('jitter').textContent = ((parseFloat(stats.videoJitter) + parseFloat(stats.audioJitter)) / 2).toPrecision(3) || 'N/A';
-        this.shadowRoot.getElementById('rtt').textContent = ((parseFloat(stats.videoRoundTripTime) + parseFloat(stats.audioRoundTripTime)) / 2).toPrecision(3) || 'N/A';
+        
+        const totalPacketLoss = parseInt(stats.videoPacketsLost) + parseInt(stats.audioPacketsLost);
+        this.shadowRoot.getElementById('packet-loss').textContent = isNaN(totalPacketLoss) ? 'N/A' : totalPacketLoss;
+
+        const avgJitter = (parseFloat(stats.videoJitter) + parseFloat(stats.audioJitter)) / 2;
+        this.shadowRoot.getElementById('jitter').textContent = isNaN(avgJitter) ? 'N/A' : avgJitter.toPrecision(3);
+
+        const avgRtt = (parseFloat(stats.videoRoundTripTime) + parseFloat(stats.audioRoundTripTime)) / 2;
+        this.shadowRoot.getElementById('rtt').textContent = isNaN(avgRtt) ? 'N/A' : avgRtt.toPrecision(3);
+        
         this.shadowRoot.getElementById('resolution').textContent = stats.resWidth && stats.resHeight ? `${stats.resWidth}x${stats.resHeight}` : 'N/A';
         this.shadowRoot.getElementById('fps').textContent = stats.currentFPS || 'N/A';
 
@@ -160,6 +171,9 @@ class StreamPublishAnalytics extends HTMLElement {
     }
 
     _updateCharts(stats) {
+        if (!this._bitrateChart || !this._fpsChart) {
+            return;
+        }
         const secondsElapsed = Math.floor((Date.now() - this._startTime) / 1000);
         const timeLabel = `${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')}`;
         const maxPoints = 60;
