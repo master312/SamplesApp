@@ -91,6 +91,10 @@ class MockWebRTCAdaptor {
         // Helper method to simulate receiving data
         this.triggerEvent('data_received', { streamId, data });
     }
+
+    enableStats(streamId) {
+        // This is a no-op in the mock for now. Overriden in the test.
+    }
 }
 
 class MockMediaManager {
