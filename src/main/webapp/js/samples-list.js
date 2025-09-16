@@ -17,6 +17,7 @@ const CATEGORIES = {
         title: "Applications",
         icon: `${ICONS_DIR}cast.svg`,
         showInSamplesViewMenu: false,
+        showOnIndexPage: true,
     },
     ADVANCED: {
         id: "advanced",

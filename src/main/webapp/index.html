@@ -54,6 +54,32 @@
             border-top: 1px solid #e5e5e5;
             color: #777;
         }
+
+        .dev-samples-button {
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .dev-samples-button .btn {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 0.875rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .dev-samples-button .btn:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            color: #495057;
+            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -70,6 +96,8 @@
             </div>
         </div>
         
+        <!-- 
+        Uncomment to see configuration information
         <div class="config-info">
             <div class="alert alert-light border">
                 <div class="d-flex align-items-center justify-content-between mb-2">
@@ -79,10 +107,9 @@
                     </button>
                 </div>
                 <ul id="config-list" class="mb-0">
-                    <!-- Config items will be populated here -->
                 </ul>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -106,6 +133,9 @@
     function initializeConfigInfo() {
         const configToggle = document.getElementById('config-toggle');
         const configList = document.getElementById('config-list');
+        if (!configList || !configToggle) {
+            return;
+        }
 
         const allMethods = Object.getOwnPropertyNames(SamplesConfig)
             .filter(name => typeof SamplesConfig[name] === 'function' && name.startsWith('get'))
@@ -152,7 +182,7 @@
             return;
         }
 
-        const groupedSamples = samples.reduce((acc, sample) => {
+        const groupedSamples = samples.filter(sample => sample.category.showOnIndexPage).reduce((acc, sample) => {
             const categoryId = sample.category.id;
             if (!acc[categoryId]) {
                 acc[categoryId] = {
@@ -184,6 +214,17 @@
                 row.appendChild(col);
             });
         }
+        
+        // Add dev samples button
+        const devSamplesDiv = document.createElement('div');
+        devSamplesDiv.className = 'dev-samples-button';
+        devSamplesDiv.innerHTML = `
+            <a href="sample-viewer.html?sample=samples/play-webrtc.html" class="btn">
+                <img src="css/external/icons/gear.svg" width="14" height="14" style="margin-right: 0.25rem;" alt="">
+                Developer Samples
+            </a>
+        `;
+        container.appendChild(devSamplesDiv);
         
         // Lazy load videos after page settles
         setTimeout(() => {
