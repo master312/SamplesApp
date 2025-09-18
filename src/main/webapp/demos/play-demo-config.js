@@ -5,11 +5,11 @@ export const PlayDemoConfig = [
     {
         title: 'Demo stream 1',
         streamId: '24x7-2test',
-        logo: "../img/samples/play_webrtc.png"
+        logo: "../img/samples/play-button-wide.png"
     },
     {
         title: 'Demo stream 2',
         streamId: '24x7test',
-        logo: "../img/samples/play_webrtc.png"
+        logo: "../img/samples/play-button-wide.png"
     },
 ]; 

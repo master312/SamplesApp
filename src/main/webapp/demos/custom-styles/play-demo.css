@@ -117,4 +117,22 @@ body {
     box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
     color: white;
     text-decoration: none;
+}
+
+.demo-footer {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.back-link {
+    color: #ff4444;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    color: #cc0000;
+    text-decoration: none;
 } 

@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #18181b;
-    color: #efeff1;
+    background-color: #f8f9fa;
+    color: #333;
 }
 
 .card {
@@ -16,10 +16,10 @@
 }
 
 .card-header {
-    background-color: #2a2a2d;
-    color: #efeff1;
+    background-color: #fff;
+    color: #333;
     font-weight: 600;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e9ecef;
     padding: 0.75rem 1.25rem;
     cursor: default;
 }
@@ -37,6 +37,7 @@
     flex: 1;
     padding: 0;
     overflow: hidden;
+    background-color: #fff;
 }
 
 #data-content {
@@ -54,7 +55,7 @@
     flex-direction: column;
     gap: 0.5rem;
     scrollbar-width: thin;
-    scrollbar-color: #4d4d50 #18181b;
+    scrollbar-color: #ced4da #f8f9fa;
 }
 
 #all-messages::-webkit-scrollbar {
@@ -62,36 +63,36 @@
 }
 
 #all-messages::-webkit-scrollbar-track {
-    background: #18181b;
+    background: #f8f9fa;
 }
 
 #all-messages::-webkit-scrollbar-thumb {
-    background-color: #4d4d50;
+    background-color: #ced4da;
     border-radius: 4px;
 }
 
 .input-group {
     padding: 1rem;
-    border-top: 1px solid #333;
-    background-color: #1f1f23;
+    border-top: 1px solid #e9ecef;
+    background-color: #fff;
 }
 
 #data-message {
-    background-color: #3a3a3d;
-    border: 1px solid #4d4d50;
-    color: #efeff1;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    color: #333;
     border-radius: 0.25rem 0 0 0.25rem;
 }
 
 #data-message:focus {
-    background-color: #4d4d50;
-    border-color: #6a6a6d;
-    box-shadow: none;
-    color: #efeff1;
+    background-color: #fff;
+    border-color: #ff4444;
+    box-shadow: 0 0 0 0.2rem rgba(255, 68, 68, 0.25);
+    color: #333;
 }
 
 #data-message::placeholder {
-    color: #adadb8;
+    color: #6c757d;
 }
 
 #send-data {
