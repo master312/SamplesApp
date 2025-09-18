@@ -4,7 +4,7 @@ export const playDemoBackendUrl = "wss://test.antmedia.io/24x7test/websocket";
 export const PlayDemoConfig = [
     {
         title: 'Demo stream 1',
-        streamId: '24x7-2test',
+        streamId: 'live_test',
         logo: "../img/samples/play-button-wide.png"
     },
     {
