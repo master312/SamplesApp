@@ -1,0 +1,25 @@
+:host {
+    position: static; /* Override the absolute positioning */
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.label {
+    /* Keep the label styling as is, it's not causing issues */
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0 0 5px 0;
+} 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watching Stream</title>
+    
+    <!-- Load the CSS configuration FIRST -->
+    <script src="../js/css-override-config.js"></script>
+    
+    <!-- Override default CSS paths for customization -->
+    <script>
+        window.AntMediaConfig.componentStyles['data-channel-messaging'] = './custom-styles/data-channel-messaging-override.css';
+        window.AntMediaConfig.componentStyles['video-view'] = './custom-styles/video-view-override.css';
+    </script>
+    
+    <link rel="stylesheet" href="../css/external/bootstrap4/bootstrap.min.css?v=1.0">
+    <link rel="stylesheet" href="./custom-styles/watch.css?v=1.0">
+</head>
+<body>
+    <div class="watch-container">
+        <div class="watch-header">
+            <a href="./play-demo.html" class="back-button">&larr;</a>
+            <h1 id="watch-title" class="watch-title">Watching Stream</h1>
+        </div>
+        <div class="watch-content">
+            <div class="video-section">
+                <video-view id="remote-video" muted></video-view>
+            </div>
+            <div class="chat-section">
+                <data-channel-messaging id="data-channel" class="h-100"></data-channel-messaging>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/external/adapter-latest.js"></script>
+    <script type="module">
+        import { WebRTCAdaptor } from '../js/ant-sdk/webrtc_adaptor.js';
+        import { playDemoBackendUrl } from './play-demo-config.js';
+        import '../components/video-view.js';
+        import '../components/data-channel-messaging.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const remoteVideo = document.getElementById('remote-video');
+            const dataChannel = document.getElementById('data-channel');
+            const watchTitle = document.getElementById('watch-title');
+
+            let isErrorDisplayed = false;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const streamId = urlParams.get('streamId');
+
+            if (!streamId) {
+                watchTitle.textContent = "Error: No Stream ID provided";
+                return;
+            }
+
+            watchTitle.textContent = `Watching ${streamId}`;
+
+
+            dataChannel.onDataReceivedInterceptor = (message) => {
+                // Intercept received message, so that we show only chat messages in the chat section
+                if (!message.startsWith("#//DEMO-CHAT-MESSAGE//#")) {
+                    return null;
+                }
+                
+                return message.replace("#//DEMO-CHAT-MESSAGE//#", "");
+            };
+            
+            dataChannel.displaySentMessages = false;
+            dataChannel.onDataSendInterceptor = (message) => {
+                // display message in the chat section before we modify it for send
+                dataChannel._displayMessage('Sent', message);
+                return `#//DEMO-CHAT-MESSAGE//# ${message}`;
+            };
+
+            const adaptor = new WebRTCAdaptor({
+                websocket_url: playDemoBackendUrl,
+                remoteVideoElement: remoteVideo.video,
+                isPlayMode: true,
+                dataChannelEnabled: true,
+                callback: (info, obj) => {
+                    if (info === "initialized") adaptor.play(streamId);
+                },
+                callbackError: (error, message) => {
+                    if (isErrorDisplayed) return;
+                    isErrorDisplayed = true;
+
+                    console.error("WebRTC Adaptor Error:", error, message);
+
+                    let errorMessage = `An unexpected error occurred: ${error}. Check the console for details.`;
+                    if (error === "no_stream_exist") {
+                        errorMessage = `The stream "${streamId}" is either not available or has ended. Please check the stream ID and try again.`;
+                    }
+                    
+                    alert(errorMessage);
+                }
+            });
+
+            dataChannel.setup(adaptor);
+        });
+    </script>
+</body>
+</html> 

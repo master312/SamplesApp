@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media - Play Demo</title>
+    <link rel="stylesheet" href="../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="./custom-styles/play-demo.css">
+</head>
+<body>
+    <div class="container demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">Choose a Stream to Watch</h1>
+            <p class="demo-subtitle">Select one of the available WebRTC live streams below</p>
+        </div>
+        <div id="demo-card-container" class="demo-card-container">
+            <!-- Demo cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { PlayDemoConfig } from './play-demo-config.js';
+
+        /**
+         * Creates and populates the stream selection cards on the demo page.
+         */
+        function initializeDemoCards() {
+            const cardContainer = document.getElementById('demo-card-container');
+            if (!cardContainer) return;
+
+            PlayDemoConfig.forEach(config => {
+                const cardHTML = `
+                    <div class="demo-card">
+                        <img class="demo-card-logo" src="${config.logo}" alt="${config.title} logo">
+                        <div class="demo-card-content">
+                            <h3 class="demo-card-title">${config.title}</h3>
+                        </div>
+                        <div class="demo-card-overlay">
+                            <a href="watch.html?streamId=${config.streamId}" class="play-button">Play Stream</a>
+                        </div>
+                    </div>
+                `;
+                cardContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeDemoCards);
+    </script>
+</body>
+</html> 
