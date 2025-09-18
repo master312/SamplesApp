@@ -1,5 +1,7 @@
 /**
- * handles sending and receiving messages over WebRTC data channels.
+ * Handles sending and receiving messages over WebRTC data channels.
+ * It supports an `onDataReceivedInterceptor` callback to pre-process received messages.
+ * It supports an `onDataSendInterceptor` callback to pre-process messages before they are actually sent over data channel.
  */
 
 import { ComponentCommon } from './component-common.js';
@@ -46,6 +48,20 @@ class DataChannelMessaging extends HTMLElement {
         this._adaptor = null;
         this._publishStreamId = null;
         this._playStreamId = null;
+
+        /** Whether to display sent messages in the chat */
+        this.displaySentMessages = true;
+
+        /**
+         * A callback function that is triggered when a new message is received.
+         * It allows for intercepting and modifying the message before it is displayed.
+         * @param {string} message - The raw message received from the data channel.
+         * @returns {string|null} - The modified message to be displayed, or null/empty to display the original message.
+         */
+        this.onDataReceivedInterceptor = null;
+
+        /** Same as @onDataReceivedInterceptor, but for messages sent over data channel. Called before message is sent. */
+        this.onDataSendInterceptor = null;
     }
 
     connectedCallback() {
@@ -72,7 +88,15 @@ class DataChannelMessaging extends HTMLElement {
                 this._playStreamId = null;
                 this._updateUI();
             } else if (info === "data_received") {
-                this._displayMessage('Received', obj.data);
+                if (typeof this.onDataReceivedInterceptor === 'function') {
+                    const processedMessage = this.onDataReceivedInterceptor(obj.data);
+                    if (typeof processedMessage === 'string' && processedMessage.length > 0) {
+                        this._displayMessage('Received', processedMessage);
+                    }
+                } else {
+                    this._displayMessage('Received', obj.data);
+                }
+
             }
         });
     }
@@ -88,16 +112,24 @@ class DataChannelMessaging extends HTMLElement {
     }
 
     _sendData() {
-        const message = this.shadowRoot.getElementById('data-message').value.trim();
+        let message = this.shadowRoot.getElementById('data-message').value.trim();
         if (!message || !this._adaptor) return;
 
         const streamId = this._publishStreamId || this._playStreamId;
-        
-        if (streamId) {
-            this._adaptor.sendData(streamId, message);
-            this._displayMessage('Sent', message);
-            this.shadowRoot.getElementById('data-message').value = '';
+        if (!streamId) {
+            return;
         }
+
+        if (typeof this.onDataSendInterceptor === 'function') {
+            const processedMessage = this.onDataSendInterceptor(message);
+            if (typeof processedMessage !== 'string' || processedMessage.length === 0) return;
+
+            message = processedMessage;
+        }
+
+        this._adaptor.sendData(streamId, message);
+        if (this.displaySentMessages) this._displayMessage('Sent', message);
+        this.shadowRoot.getElementById('data-message').value = '';
     }
 
     _displayMessage(type, message) {
