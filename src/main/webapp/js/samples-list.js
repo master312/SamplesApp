@@ -66,6 +66,15 @@ export const samples = [
         tags: [TAGS.VOD, TAGS.PUBLISH, TAGS.VIDEO, TAGS.AUDIO],
         homeCardFactory: createSampleHomeCard,
     },
+    {
+        name: "Collaborative Whiteboard",
+        link: `${DEMOS_DIR}whiteboard-demo.html`,
+        category: CATEGORIES.LIVE_APPS,
+        description: "Draw together in real-time with video chat. Create or join whiteboard rooms for collaborative sessions.",
+        image: `${IMG_DIR}whiteboard-demo.png`,
+        tags: [TAGS.WEBRTC, TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
+        homeCardFactory: createSampleHomeCard,
+    },
     // {
     //     name: "Webinar",
     //     link: `${SAMPLES_DIR}webinar.html`,
