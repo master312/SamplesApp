@@ -251,7 +251,12 @@
 
         groupId = `group_${Date.now()}`;
         playlistStreamId = `playlist_${Date.now()}`;
-        const vodUrl = `${serverUrl}streams/${selectedVod.vodId}.mp4`;
+        let vodUrl = `${serverUrl}streams/${selectedVod.vodId}.mp4`;
+
+        // Hackfix for test.antmedia.io, since it can not route form localhost to test.antmedia.io, so we do it like this
+        if (serverUrl.includes("test.antmedia.io")) {
+            vodUrl = vodUrl.replace("https://test.antmedia.io", "http://localhost:5080");
+        }
 
         const groupBroadcastObject = {
             streamId: groupId,
