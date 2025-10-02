@@ -248,50 +248,80 @@
     }
 
     function joinRoom() {
+        console.log('[JOIN] Joining room:', roomId);
         document.getElementById('loading-overlay').classList.add('active');
         showView('whiteboard-view');
         document.getElementById('active-room-id').textContent = roomId;
         myStreamId = `participant_${Date.now()}`;
+        console.log('[JOIN] My stream ID:', myStreamId);
 
         const canvas = document.getElementById('whiteboard-canvas');
         canvas.setup(adaptor);
         canvas.setStreamId(roomId);
 
         adaptor.addEventListener((info, obj) => {
-            if (info === 'publish_started') addLocalVideo();
+            console.log(`[EVENT] ${info}`, obj?.streamId || '');
+            
+            if (info === 'publish_started') {
+                console.log('[PUBLISH] Started, adding local video');
+                addLocalVideo();
+            }
             else if (info === 'play_started') {
+                console.log('[PLAY] Started, fetching broadcast object');
                 adaptor.getBroadcastObject(roomId);
                 document.getElementById('loading-overlay').classList.remove('active');
             }
             else if (info === 'broadcastObject' && obj.broadcast) {
                 const broadcast = JSON.parse(obj.broadcast);
+                console.log('[BROADCAST] Object received:', obj.streamId, broadcast);
+                
                 if (obj.streamId === roomId) {
+                    console.log('[ROOM] Main track, subTracks:', broadcast.subTrackStreamIds);
                     updateParticipants(broadcast.subTrackStreamIds || []);
                 } else {
+                    console.log('[PARTICIPANT] Subtrack registered:', obj.streamId);
                     participants[broadcast.streamId] = broadcast;
                 }
             }
-            else if (info === 'newTrackAvailable') addTrack(obj);
+            else if (info === 'newTrackAvailable') {
+                console.log('[TRACK] New track:', obj.trackId, 'kind:', obj.track.kind);
+                addTrack(obj);
+            }
         });
 
+        console.log('[PUBLISH] Starting publish for:', myStreamId, 'to room:', roomId);
         adaptor.publish(myStreamId, null, null, null, null, roomId);
+        
+        console.log('[PLAY] Starting play for room:', roomId);
         adaptor.play(roomId, null, roomId, []);
     }
 
     function updateParticipants(activeIds) {
+        console.log('[UPDATE] Active participants:', activeIds, 'Known:', Object.keys(participants));
+        
         Object.keys(participants).forEach(id => {
             if (!activeIds.includes(id)) {
+                console.log('[REMOVE] Participant left:', id);
                 delete participants[id];
             }
         });
+        
         activeIds.forEach(id => {
             if (id !== myStreamId && !participants[id]) {
+                console.log('[NEW] Fetching participant info:', id);
                 adaptor.getBroadcastObject(id);
             }
         });
     }
 
     async function addLocalVideo() {
+        const existing = document.getElementById('local-video');
+        if (existing) {
+            console.warn('[LOCAL] Already exists, skipping duplicate');
+            return;
+        }
+        
+        console.log('[LOCAL] Creating local video element');
         const card = document.createElement('div');
         card.className = 'participant-card';
         card.innerHTML = `
@@ -301,17 +331,26 @@
         document.getElementById('participants-sidebar').insertBefore(card, null);
         
         await customElements.whenDefined('video-view');
-        setTimeout(() => document.getElementById('local-video').setup(adaptor), 100);
+        setTimeout(() => {
+            console.log('[LOCAL] Setting up video element');
+            document.getElementById('local-video').setup(adaptor);
+        }, 100);
     }
 
     async function addTrack(obj) {
         const trackLabel = obj.trackId.substring('ARDAMSx'.length);
-        if (trackLabel === roomId || trackLabel === myStreamId) return;
+        if (trackLabel === roomId || trackLabel === myStreamId) {
+            console.log('[TRACK] Ignoring room/self track:', trackLabel);
+            return;
+        }
 
         const baseLabel = trackLabel.replace(/^(video|audio)Track/, 'track');
+        console.log('[TRACK] Processing:', trackLabel, '→', baseLabel, 'kind:', obj.track.kind);
+        
         let videoView = document.getElementById(`remote-video-${baseLabel}`);
         
         if (!videoView && obj.track.kind === 'video') {
+            console.log('[CARD] Creating participant card:', baseLabel);
             const card = document.createElement('div');
             card.className = 'participant-card';
             card.id = `participant-${baseLabel}`;
@@ -325,6 +364,7 @@
             document.getElementById('participants-sidebar').appendChild(card);
             await customElements.whenDefined('video-view');
             videoView = document.getElementById(`remote-video-${baseLabel}`);
+            console.log('[CARD] Created:', baseLabel);
         }
 
         if (videoView) {
@@ -333,6 +373,8 @@
                 if (video) {
                     if (!video.srcObject) video.srcObject = new MediaStream();
                     video.srcObject.addTrack(obj.track);
+                    console.log('[TRACK] Added to video element:', baseLabel, obj.track.kind, 'Total tracks:', video.srcObject.getTracks().length);
+                    
                     if (obj.track.kind === 'audio') {
                         video.muted = false;
                         video.volume = 1.0;
@@ -340,9 +382,12 @@
                     video.play();
                 }
             }, 100);
+        } else {
+            console.warn('[TRACK] No video element found for:', baseLabel, obj.track.kind);
         }
 
         obj.track.onended = () => {
+            console.log('[TRACK] Ended:', baseLabel, obj.track.kind);
             if (obj.track.kind === 'video') {
                 removeParticipant(baseLabel);
             }
@@ -350,6 +395,7 @@
 
         obj.stream.onremovetrack = (event) => {
             const remainingVideoTracks = Array.from(event.target.getTracks()).filter(t => t.kind === 'video' && t.readyState === 'live');
+            console.log('[STREAM] Track removed from stream:', baseLabel, 'Remaining video tracks:', remainingVideoTracks.length);
             if (remainingVideoTracks.length === 0) {
                 removeParticipant(baseLabel);
             }
@@ -367,7 +413,13 @@
     };
 
     function removeParticipant(id) {
-        document.getElementById(`participant-${id}`)?.remove();
+        const card = document.getElementById(`participant-${id}`);
+        if (card) {
+            console.log('[REMOVE] Removing participant card:', id);
+            card.remove();
+        } else {
+            console.warn('[REMOVE] Card not found:', id);
+        }
     }
 
     function leaveRoom() {
