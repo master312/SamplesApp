@@ -89,6 +89,7 @@
 	</bean>
 
 
+	<bean id="sampleBroadcastManager" class="io.antmedia.enterprise.streamapp.SampleBroadcastManager"/>
 
 	<bean id="webrtc.adaptor"
 		  class="#{ T(io.antmedia.rest.RestServiceBase).isEnterprise() ? 'io.antmedia.enterprise.webrtc.WebRTCAdaptor' : 'io.antmedia.webrtc.MockWebRTCAdaptor' }"/>
