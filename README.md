@@ -29,6 +29,7 @@ Sample demonstrations using these components can be found in the `src/main/webap
 
 ## Development Guidelines
  - The HTML & JS source for web examples and re-usable components is located in `/src/main/webapp/`
+ - While developing, you can use run dev web-server to quickly preview changes. See: /src/main/webapp/start_server.sh
 
 ### Basic Component Usage
 Components can be styled by setting `css-override-config.js` configuration, or by overriding CSS paths directly on top of HTML file. See `samples/css-customization.html` for examples.

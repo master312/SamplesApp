@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media - Stream Commentator</title>
+    <link rel="stylesheet" href="../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="./custom-styles/play-demo.css">
+    <style>
+        .commentator-layout {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .main-video-container {
+            flex: 1;
+        }
+        .commentator-panel {
+            width: 320px;
+            flex-shrink: 0;
+        }
+        .video-wrapper {
+            position: relative;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 300px;
+        }
+        .video-wrapper video-view {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .vod-selection-section {
+            display: block;
+        }
+        .commentator-section {
+            display: none;
+        }
+        .commentator-section.active {
+            display: block;
+        }
+        .viewer-link-section {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+        .viewer-link-section.active {
+            display: block;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        .loading-subtext {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container demo-container">
+    <div class="demo-header">
+        <h1 class="demo-title">Stream Commentator</h1>
+        <p class="demo-subtitle">Add live commentary to VOD streams</p>
+    </div>
+
+    <div class="alert alert-primary" role="alert">
+        <h5 class="alert-heading">📹 How It Works</h5>
+        <p class="mb-2">
+            This demo allows you to add <strong>live commentary</strong> to pre-recorded videos (VODs) and broadcast the combined stream to viewers.
+        </p>
+        <ul class="mb-2" style="font-size: 14px;">
+            <li><strong>Select a VOD:</strong> Choose a video from your library (min 4 minutes)</li>
+            <li><strong>Grant Camera Access:</strong> Your camera and microphone will be used for live commentary</li>
+            <li><strong>Auto-Start:</strong> Commentary begins automatically when the video starts playing</li>
+            <li><strong>Share Link:</strong> Viewers can watch the VOD with your live commentary overlaid</li>
+        </ul>
+        <p class="mb-0" style="font-size: 13px;">
+            <strong>Use Case:</strong> Perfect for sports commentary, live reactions, educational content, watch parties, and more!
+        </p>
+    </div>
+
+    <!-- Step 1: VOD Selection -->
+    <div id="vod-selection-section" class="vod-selection-section">
+        <h4 class="mb-3">Select a VOD to Stream</h4>
+        <vod-browser id="vod-browser" disable-delete></vod-browser>
+        <div class="text-center mt-4">
+            <button id="create-session-button" class="btn btn-primary btn-lg" disabled>Select a VOD to Start</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Commentator Interface -->
+    <div id="commentator-section" class="commentator-section">
+        <div class="commentator-layout">
+            <div class="main-video-container">
+                <h5>VOD Stream Preview</h5>
+                <div class="video-wrapper">
+                    <video-view id="vodPreview" show-controls="true" muted="true"></video-view>
+                </div>
+            </div>
+            <div class="commentator-panel">
+                <h5>Your Commentary</h5>
+                <div class="video-wrapper mb-3">
+                    <video-view id="localVideo" is-local show-controls="false"></video-view>
+                </div>
+                <div class="text-center mt-2">
+                    <span class="badge badge-success" id="commentingStatus" style="font-size: 14px; display: none;">● LIVE</span>
+                </div>
+                <button id="stop-commenting-button" class="btn btn-danger btn-block btn-lg mt-2" style="display:none;">Stop Commentary</button>
+            </div>
+        </div>
+
+        <div id="viewer-link-section" class="viewer-link-section">
+            <h5>Share This Link With Viewers</h5>
+            <div class="input-group mb-2">
+                <input id="viewer-link-input" type="text" class="form-control" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="copy-link-button">Copy</button>
+                    <a id="open-viewer-link" href="#" target="_blank" class="btn btn-primary">Open in New Tab</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-footer mt-4">
+        <a href="../index.html" class="back-link">← Back to Samples</a>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Starting Stream...</div>
+        <div class="loading-subtext">Preparing video and commentary session</div>
+    </div>
+</div>
+
+<script src="../js/external/adapter-latest.js"></script>
+<script type="module">
+    import '../components/vod-browser.js';
+    import '../components/video-view.js';
+    import { SamplesConfig } from '../js/samples-config.js';
+    import { WebRTCAdaptor } from '../js/ant-sdk/webrtc_adaptor.js';
+    import { generateRandomString, getWebSocketURL } from '../js/ant-sdk/utility.js';
+
+    let selectedVod = null;
+    let serverUrl = null;
+    let groupId = null;
+    let playlistStreamId = null;
+    let commentatorStreamId = null;
+    let webRTCAdaptor = null;
+    let isCommenting = false;
+
+    const vodBrowser = document.getElementById('vod-browser');
+    const createSessionButton = document.getElementById('create-session-button');
+    const stopCommentingButton = document.getElementById('stop-commenting-button');
+    const copyLinkButton = document.getElementById('copy-link-button');
+
+    function initialize() {
+        const backendUrl = SamplesConfig.getBackendUrl();
+        serverUrl = backendUrl.origin + backendUrl.pathname;
+        
+        vodBrowser.setBackendUrl(serverUrl);
+
+        vodBrowser.addEventListener('vod-selected', (event) => {
+            selectedVod = event.detail.vod;
+            
+            const minDurationSeconds = 240;
+            const vodDuration = selectedVod.duration / 1000;
+            
+            if (vodDuration < minDurationSeconds) {
+                createSessionButton.disabled = true;
+                createSessionButton.textContent = `VOD too short (min 4 minutes required)`;
+                createSessionButton.classList.add('btn-secondary');
+                createSessionButton.classList.remove('btn-primary');
+                alert(`This VOD is only ${Math.floor(vodDuration / 60)} minutes long. Please select a VOD that is at least 4 minutes long for commentary.`);
+            } else {
+                createSessionButton.disabled = false;
+                createSessionButton.textContent = `Start Session with: ${selectedVod.vodName}`;
+                createSessionButton.classList.add('btn-primary');
+                createSessionButton.classList.remove('btn-secondary');
+            }
+        });
+
+        createSessionButton.addEventListener('click', createCommentatorSession);
+        stopCommentingButton.addEventListener('click', stopCommenting);
+        copyLinkButton.addEventListener('click', copyViewerLink);
+    }
+
+    async function createCommentatorSession() {
+        if (!selectedVod) {
+            alert('Please select a VOD first.');
+            return;
+        }
+
+        createSessionButton.disabled = true;
+        createSessionButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Requesting Camera Access...';
+
+        try {
+            await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            console.log("Camera permission granted");
+        } catch (error) {
+            console.error("Camera permission denied:", error);
+            alert("Camera and microphone access is required for commentary. Please grant permission and try again.");
+            createSessionButton.disabled = false;
+            createSessionButton.innerHTML = `Start Session with: ${selectedVod.vodName}`;
+            return;
+        }
+
+        createSessionButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Creating Session...';
+
+        groupId = `group_${Date.now()}`;
+        playlistStreamId = `playlist_${Date.now()}`;
+        const vodUrl = `${serverUrl}streams/${selectedVod.vodId}.mp4`;
+
+        const groupBroadcastObject = {
+            streamId: groupId,
+            name: `Commentary Session - ${selectedVod.vodName}`,
+            type: 'liveStream',
+            virtual: true
+        };
+
+        const playlistBroadcastObject = {
+            streamId: playlistStreamId,
+            mainTrackStreamId: groupId,
+            name: `VOD Source - ${selectedVod.vodName}`,
+            type: 'playlist',
+            playlistLoopEnabled: true,
+            playListItemList: [{
+                    streamUrl: vodUrl,
+                    type: 'VoD',
+                    name: selectedVod.vodName
+            }]
+        };
+
+        try {
+            const createGroupResponse = await fetch(`${serverUrl}rest/v2/broadcasts/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(groupBroadcastObject),
+            });
+            
+            if (!createGroupResponse.ok) {
+                const error = await createGroupResponse.json();
+                throw new Error(`Failed to create group: ${error.message || 'Server error'}`);
+            }
+
+            console.log('Group broadcast created');
+
+            const createPlaylistResponse = await fetch(`${serverUrl}rest/v2/broadcasts/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(playlistBroadcastObject),
+            });
+
+            if (!createPlaylistResponse.ok) {
+                const error = await createPlaylistResponse.json();
+                throw new Error(`Failed to create playlist: ${error.message || 'Server error'}`);
+            }
+            
+            console.log('Playlist broadcast created');
+
+            const startPlaylistResponse = await fetch(`${serverUrl}rest/v2/broadcasts/${playlistStreamId}/start`, {
+                method: 'POST',
+            });
+
+            if (!startPlaylistResponse.ok) {
+                const error = await startPlaylistResponse.json();
+                throw new Error(`Failed to start playlist: ${error.message || 'Server error'}`);
+            }
+
+            console.log('Playlist started successfully');
+
+            document.getElementById('vod-selection-section').style.display = 'none';
+            document.getElementById('commentator-section').classList.add('active');
+            
+            showLoadingOverlay();
+
+            initializeWebRTC();
+
+        } catch (error) {
+            console.error('Error creating session:', error);
+            hideLoadingOverlay();
+            alert(`Error: ${error.message}`);
+            createSessionButton.disabled = false;
+            createSessionButton.innerHTML = `Start Session with: ${selectedVod.vodName}`;
+        }
+    }
+
+    function initializeWebRTC() {
+        const backendUrl = SamplesConfig.getBackendUrl();
+        const websocketURL = getWebSocketURL(backendUrl);
+
+        const mediaConstraints = {
+            video: { width: { min: 176, max: 640 } },
+            audio: true
+        };
+
+        setupVideoMonitoring();
+
+        const vodPreviewView = document.getElementById('vodPreview');
+        const localVideoView = document.getElementById('localVideo');
+
+        webRTCAdaptor = new WebRTCAdaptor({
+            websocket_url: websocketURL,
+            mediaConstraints: mediaConstraints,
+            localVideoElement: localVideoView.video,
+            remoteVideoElement: vodPreviewView.video,
+            isPlayMode: false,
+            debug: true,
+            callback: (info, obj) => {
+                if (info == "initialized") {
+                    console.log("WebRTC initialized, playing VOD preview");
+                    webRTCAdaptor.play(playlistStreamId);
+                }
+                else if (info == "play_started") {
+                    console.log("VOD preview started");
+                    ensureVideosPlaying();
+                }
+                else if (info == "publish_started") {
+                    console.log("Commentary started:", obj.streamId);
+                    isCommenting = true;
+                    stopCommentingButton.style.display = 'block';
+                    document.getElementById('commentingStatus').style.display = 'inline';
+                    showViewerLink();
+                    startCommentingAnimation();
+                    ensureVideosPlaying();
+                }
+                else if (info == "publish_finished") {
+                    console.log("Commentary stopped");
+                    isCommenting = false;
+                    stopCommentingButton.style.display = 'none';
+                    document.getElementById('commentingStatus').style.display = 'none';
+                }
+            },
+            callbackError: function (error, message) {
+                console.error("WebRTC Error:", error, message);
+                hideLoadingOverlay();
+                
+                if (error.indexOf("no_stream_exist") == -1) {
+                    alert("Error: " + error + (message ? " - " + message : ""));
+                }
+            }
+        });
+    }
+
+    function startCommenting() {
+        if (!webRTCAdaptor) {
+            alert("WebRTC not initialized");
+            return;
+        }
+
+        commentatorStreamId = `commentator_${Date.now()}`;
+        
+        webRTCAdaptor.publish(commentatorStreamId, null, null, null, commentatorStreamId, groupId, null, null);
+    }
+
+    async function stopCommenting() {
+        if (!confirm("Are you sure you want to stop the commentary session? This will end the stream for all viewers.")) {
+            return;
+        }
+
+        stopCommentingButton.disabled = true;
+        stopCommentingButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Stopping...';
+
+        try {
+            if (webRTCAdaptor && commentatorStreamId) {
+                webRTCAdaptor.stop(commentatorStreamId);
+            }
+
+            if (webRTCAdaptor && playlistStreamId) {
+                webRTCAdaptor.stop(playlistStreamId);
+            }
+
+            if (playlistStreamId) {
+                console.log("Deleting playlist stream:", playlistStreamId);
+                const deleteResponse = await fetch(`${serverUrl}rest/v2/broadcasts/${playlistStreamId}`, {
+                    method: 'DELETE',
+                });
+                
+                if (deleteResponse.ok) {
+                    console.log("Playlist stream deleted successfully");
+                } else {
+                    console.error("Failed to delete playlist stream");
+                }
+            }
+
+            if (groupId) {
+                console.log("Deleting group broadcast:", groupId);
+                const deleteGroupResponse = await fetch(`${serverUrl}rest/v2/broadcasts/${groupId}`, {
+                    method: 'DELETE',
+                });
+                
+                if (deleteGroupResponse.ok) {
+                    console.log("Group broadcast deleted successfully");
+                } else {
+                    console.error("Failed to delete group broadcast");
+                }
+            }
+
+            if (webRTCAdaptor) {
+                webRTCAdaptor.closeWebSocket();
+            }
+
+            document.getElementById('vod-selection-section').style.display = 'block';
+            document.getElementById('commentator-section').classList.remove('active');
+            
+            groupId = null;
+            playlistStreamId = null;
+            commentatorStreamId = null;
+            webRTCAdaptor = null;
+            isCommenting = false;
+
+            createSessionButton.disabled = false;
+            createSessionButton.innerHTML = `Start Session with: ${selectedVod.vodName}`;
+
+        } catch (error) {
+            console.error("Error stopping session:", error);
+            alert("Error stopping session: " + error.message);
+            stopCommentingButton.disabled = false;
+            stopCommentingButton.innerHTML = 'Stop Commentary';
+        }
+    }
+
+    function showViewerLink() {
+        const viewerLink = `${window.location.origin}${SamplesConfig.getBackendUrl().pathname}demos/commentator-view.html?id=${groupId}`;
+        document.getElementById('viewer-link-input').value = viewerLink;
+        document.getElementById('open-viewer-link').href = viewerLink;
+        document.getElementById('viewer-link-section').classList.add('active');
+    }
+
+    function copyViewerLink() {
+        const input = document.getElementById('viewer-link-input');
+        input.select();
+        document.execCommand('copy');
+        
+        copyLinkButton.textContent = 'Copied!';
+        setTimeout(() => {
+            copyLinkButton.textContent = 'Copy';
+        }, 2000);
+    }
+
+    function startCommentingAnimation() {
+        const statusBadge = document.getElementById('commentingStatus');
+        
+        function fadeLoop() {
+            statusBadge.style.opacity = "1";
+            setTimeout(() => {
+                statusBadge.style.opacity = "0.3";
+                setTimeout(() => {
+                    if (isCommenting && webRTCAdaptor && commentatorStreamId) {
+                        const state = webRTCAdaptor.signallingState(commentatorStreamId);
+                        if (state != null && state != "closed") {
+                            const iceState = webRTCAdaptor.iceConnectionState(commentatorStreamId);
+                            if (iceState != null && iceState != "new" && iceState != "closed" && 
+                                iceState != "failed" && iceState != "disconnected") {
+                                fadeLoop();
+                            }
+                        }
+                    }
+                }, 800);
+            }, 800);
+        }
+        
+        fadeLoop();
+    }
+
+    function showLoadingOverlay() {
+        var overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.add('active');
+        }
+    }
+
+    function hideLoadingOverlay() {
+        var overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+    }
+
+    function setupVideoMonitoring() {
+        var vodPreviewView = document.getElementById("vodPreview");
+        
+        if (!vodPreviewView) return;
+
+        var vodPreview = vodPreviewView.video;
+
+        var checkVideoPlaying = function() {
+            if (vodPreview.videoWidth > 0 && vodPreview.videoHeight > 0 && 
+                !vodPreview.paused && vodPreview.currentTime > 0) {
+                console.log("Video is actually playing with frames, hiding overlay and starting commentary");
+                hideLoadingOverlay();
+                vodPreview.removeEventListener('playing', checkVideoPlaying);
+                vodPreview.removeEventListener('timeupdate', checkVideoPlaying);
+                
+                setTimeout(() => {
+                    startCommenting();
+                }, 500);
+            }
+        };
+
+        vodPreview.addEventListener('playing', checkVideoPlaying);
+        vodPreview.addEventListener('timeupdate', checkVideoPlaying);
+        vodPreview.addEventListener('loadedmetadata', checkVideoPlaying);
+    }
+
+    function ensureVideosPlaying() {
+        var vodPreviewView = document.getElementById("vodPreview");
+        if (vodPreviewView) {
+            var vodPreview = vodPreviewView.video;
+            if (vodPreview && vodPreview.paused && vodPreview.srcObject) {
+                console.log("VOD preview paused, resuming...");
+                vodPreview.play().catch(e => console.log("Could not play VOD preview:", e));
+            }
+        }
+
+        var localVideoView = document.getElementById("localVideo");
+        if (localVideoView) {
+            var localVideo = localVideoView.video;
+            if (localVideo && localVideo.paused && localVideo.srcObject) {
+                console.log("Local video paused, resuming...");
+                localVideo.play().catch(e => console.log("Could not play local video:", e));
+            }
+        }
+    }
+
+    function startAutoPlayMonitor() {
+        setInterval(ensureVideosPlaying, 3000);
+        console.log("Auto-play monitor started (checks every 3 seconds)");
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initialize();
+        startAutoPlayMonitor();
+    });
+</script>
+</body>
+</html> 

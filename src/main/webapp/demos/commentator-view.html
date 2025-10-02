@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Media - Commentator Stream Viewer</title>
+    <link rel="stylesheet" href="../css/external/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/samples.css">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f5f5f5;
+        }
+        .viewer-layout {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .main-stream-container {
+            flex: 1;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            min-height: 500px;
+        }
+        .video-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        .mute-button {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mute-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .mute-button.muted {
+            background-color: rgba(220, 53, 69, 0.8);
+        }
+        .mute-button.muted:hover {
+            background-color: rgba(220, 53, 69, 1);
+        }
+        .mute-button img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0) invert(1);
+        }
+        .commentators-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+        }
+        .commentator-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .commentator-card video-view {
+            width: 100%;
+            height: 200px;
+            display: block;
+            border-radius: 4px;
+            background-color: #000;
+            position: relative;
+        }
+        .commentator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .commentator-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .commentator-mute-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .commentator-mute-btn:hover {
+            background-color: #e9ecef;
+        }
+        .commentator-mute-btn.muted {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .commentator-mute-btn img {
+            width: 12px;
+            height: 12px;
+        }
+        .commentator-mute-btn.muted img {
+            filter: brightness(0) invert(1);
+        }
+        .no-commentators {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-style: italic;
+        }
+        .live-badge {
+            display: inline-block;
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .stream-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .stream-loading-overlay.hidden {
+            display: none;
+        }
+        .stream-loading-content {
+            text-align: center;
+            color: white;
+        }
+        .stream-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .stream-loading-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .stream-loading-subtext {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="header clearfix">
+                <h3 class="text-muted">
+                    Live Commentary Stream
+                    <span class="live-badge">● LIVE</span>
+                </h3>
+                <p>Watching stream with live commentary</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="viewer-layout">
+        <div class="main-stream-container">
+            <video-view id="mainStreamVideo" show-controls="false"></video-view>
+            <div id="stream-loading-overlay" class="stream-loading-overlay">
+                <div class="stream-loading-content">
+                    <div class="stream-loading-spinner"></div>
+                    <div class="stream-loading-text">Waiting for Stream...</div>
+                    <div class="stream-loading-subtext">Connecting to live commentary</div>
+                </div>
+            </div>
+            <div class="video-controls">
+                <button id="muteMainVideo" class="mute-button">
+                    <img src="../css/external/icons/volume-up-fill.svg" alt="Volume">
+                    <span>Video Audio</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="commentators-sidebar">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h5 style="margin: 0;">Commentators</h5>
+                <button id="muteAllCommentators" class="btn btn-sm btn-outline-secondary" style="font-size: 11px;">Mute All</button>
+            </div>
+            <div id="commentators-list">
+                <div class="no-commentators">Waiting for commentators to join...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col text-center">
+            <a href="commentator-demo.html" class="btn btn-light">← Start Your Own Commentary</a>
+        </div>
+    </div>
+</div>
+
+<script src="../js/external/adapter-latest.js"></script>
+<script type="module">
+    import { WebRTCAdaptor } from '../js/ant-sdk/webrtc_adaptor.js';
+    import { SamplesConfig } from '../js/samples-config.js';
+    import { getWebSocketURL } from '../js/ant-sdk/utility.js';
+    import { getUrlParameter } from '../js/ant-sdk/fetch.stream.js';
+    import '../components/video-view.js';
+
+    let groupId = null;
+    let webRTCAdaptor = null;
+    let allParticipants = {};
+    let vodStreamId = null;
+    let trackMapping = {};
+    let pendingTracks = [];
+
+    function initializeViewer() {
+        groupId = getUrlParameter("id");
+        if (!groupId) {
+            alert("No stream ID provided in the URL.");
+            return;
+        }
+
+        console.log("Initializing viewer for group:", groupId);
+
+        const backendUrl = SamplesConfig.getBackendUrl();
+        const websocketURL = getWebSocketURL(backendUrl);
+
+        webRTCAdaptor = new WebRTCAdaptor({
+            websocket_url: websocketURL,
+            mediaConstraints: { video: false, audio: false },
+            isPlayMode: true,
+            debug: true,
+            callback: (info, obj) => {
+                if (info == "initialized") {
+                    console.log("WebRTC initialized, playing group stream:", groupId);
+                    webRTCAdaptor.play(groupId, null, groupId, [], null, null, null, null);
+                }
+                else if (info === "broadcastObject") {
+                    if (obj.broadcast === undefined) { return; }
+                    
+                    let broadcastObject = JSON.parse(obj.broadcast);
+                    
+                    if (obj.streamId === groupId) {
+                        handleMainTrackBroadcastObject(broadcastObject);
+                    } else {
+                        handleSubtrackBroadcastObject(broadcastObject);
+                    }
+                }
+                else if (info == "newTrackAvailable") {
+                    handleNewTrack(obj);
+                }
+                else if (info == "play_started") {
+                    console.log("Play started for:", obj.streamId);
+                    webRTCAdaptor.getBroadcastObject(groupId);
+                }
+                else if (info == "play_finished") {
+                    console.log("Play finished for:", obj.streamId);
+                }
+                else if (info == "data_received") {
+                    handleDataChannelMessage(obj);
+                }
+            },
+            callbackError: function (error, message) {
+                console.error("WebRTC Error:", error, message);
+                
+                if (error.indexOf("no_active_streams_in_room") == -1 && 
+                    error.indexOf("no_stream_exist") == -1) {
+                    alert("Error: " + error);
+                }
+            }
+        });
+    }
+
+    function handleDataChannelMessage(obj) {
+        console.log("==== DATA CHANNEL MESSAGE ====");
+        console.log("Raw data:", obj.data);
+        console.log("Type of data:", typeof obj.data);
+        
+        try {
+            var dataObj = JSON.parse(obj.data);
+            console.log("Parsed JSON:", dataObj);
+            console.log("Event type:", dataObj.eventType);
+            
+            var eventType = dataObj.eventType;
+            
+            if (eventType === "AUDIO_TRACK_ASSIGNMENT" || 
+                eventType === "VIDEO_TRACK_ASSIGNMENT" ||
+                eventType === "VIDEO_TRACK_ASSIGNMENT_LIST") {
+                console.log("✓ Track assignment received:", eventType);
+                console.log("Payload:", dataObj.payload);
+                
+                dataObj.payload.forEach(item => {
+                    console.log("Processing item:", item);
+                    var label = item.audioLabel || item.videoLabel;
+                    var streamId = item.trackId;
+                    
+                    if (label && streamId) {
+                        trackMapping[label] = streamId;
+                        console.log("✓ Mapped:", label, "->", streamId);
+                    }
+                });
+                
+                console.log("Current track mapping:", trackMapping);
+                processPendingTracks();
+            } else {
+                console.log("Other event type:", eventType);
+            }
+        } catch (e) {
+            console.error("Failed to parse data channel message:", e);
+            console.log("Raw message was:", obj.data);
+        }
+        
+        console.log("==============================");
+    }
+    
+    function processPendingTracks() {
+        if (pendingTracks.length === 0) return;
+        
+        console.log("Processing", pendingTracks.length, "pending tracks with new mappings");
+        
+        var tracksToProcess = pendingTracks.slice();
+        pendingTracks = [];
+        
+        tracksToProcess.forEach(trackObj => {
+            handleNewTrack(trackObj);
+        });
+    }
+
+    function handleNewTrack(obj) {
+        var trackId = obj.trackId;
+        var trackKind = obj.track.kind;
+        
+        var trackLabel = trackId.substring("ARDAMSx".length);
+        
+        console.log("New track - trackId:", trackId, "extracted label:", trackLabel, "kind:", trackKind);
+        
+        var actualStreamId = trackMapping[trackLabel];
+        
+        if (!actualStreamId) {
+            console.log("No mapping yet for:", trackLabel, "- adding to pending queue");
+            pendingTracks.push(obj);
+            return;
+        }
+        
+        console.log("Resolved to stream:", actualStreamId);
+
+        if (actualStreamId.indexOf("playlist") !== -1) {
+            vodStreamId = actualStreamId;
+            var mainVideoView = document.getElementById("mainStreamVideo");
+            var mainVideo = mainVideoView.video;
+            
+            if (!mainVideo.srcObject) {
+                mainVideo.srcObject = new MediaStream();
+            }
+            mainVideo.srcObject.addTrack(obj.track);
+            mainVideo.play().catch(e => console.log("Autoplay prevented:", e));
+            console.log("✓ Added PLAYLIST to main video:", actualStreamId);
+            
+            setupMainVideoMonitoring(mainVideo);
+        } else if (actualStreamId.indexOf("commentator") !== -1) {
+            var videoView = document.getElementById("commentatorVideo" + actualStreamId);
+            
+            if (videoView == null) {
+                createCommentatorVideo(actualStreamId, trackKind);
+                videoView = document.getElementById("commentatorVideo" + actualStreamId);
+            }
+            
+            var video = videoView.video;
+            if (!video.srcObject) {
+                video.srcObject = new MediaStream();
+            }
+            
+            video.srcObject.addTrack(obj.track);
+            video.play().catch(e => console.log("Autoplay prevented:", e));
+            console.log("✓ Added COMMENTATOR to sidebar (with audio):", actualStreamId);
+        } else {
+            console.warn("Unknown stream type:", actualStreamId);
+        }
+
+        obj.track.onended = event => {
+            console.log("Track ended");
+        }
+
+        obj.stream.onremovetrack = event => {
+            console.log("Track removed");
+            if (actualStreamId && actualStreamId.indexOf("commentator") !== -1) {
+                removeCommentatorVideo(actualStreamId);
+            }
+        }
+    }
+
+    function createCommentatorVideo(trackId, kind) {
+        var commentatorsList = document.getElementById("commentators-list");
+        
+        var noCommentatorsMsg = commentatorsList.querySelector('.no-commentators');
+        if (noCommentatorsMsg) {
+            noCommentatorsMsg.remove();
+        }
+
+        if (kind == "audio") {
+            return;
+        }
+
+        var card = document.createElement("div");
+        card.className = "commentator-card";
+        card.id = "commentatorCard" + trackId;
+
+        card.innerHTML = `
+            <video-view id="commentatorVideo${trackId}" show-controls="false"></video-view>
+            <div class="commentator-header">
+                <div class="commentator-label">Commentator</div>
+                <button class="commentator-mute-btn" data-track-id="${trackId}">
+                    <img src="../css/external/icons/volume-up-fill.svg" alt="Volume">
+                </button>
+            </div>
+        `;
+
+        commentatorsList.appendChild(card);
+        
+        var muteBtn = card.querySelector('.commentator-mute-btn');
+        muteBtn.addEventListener('click', function() {
+            toggleCommentatorMute(trackId, this);
+        });
+    }
+
+    function removeCommentatorVideo(trackId) {
+        var card = document.getElementById("commentatorCard" + trackId);
+        if (card) {
+            card.remove();
+        }
+
+        var commentatorsList = document.getElementById("commentators-list");
+        if (commentatorsList.children.length === 0) {
+            commentatorsList.innerHTML = '<div class="no-commentators">Waiting for commentators to join...</div>';
+        }
+    }
+
+    function handleMainTrackBroadcastObject(broadcastObject) {
+        let participantIds = broadcastObject.subTrackStreamIds;
+
+        let currentTracks = Object.keys(allParticipants);
+        currentTracks.forEach(trackId => {
+            if (!allParticipants[trackId].isFake && !participantIds.includes(trackId)) {
+                console.log("Stream removed:", trackId);
+                delete allParticipants[trackId];
+            }
+        });
+
+        participantIds.forEach(pid => {
+            if (allParticipants[pid] === undefined) {
+                webRTCAdaptor.getBroadcastObject(pid);
+            }
+        });
+    }
+
+    function handleSubtrackBroadcastObject(broadcastObject) {
+        allParticipants[broadcastObject.streamId] = broadcastObject;
+        console.log("Participant info:", broadcastObject.streamId, "type:", broadcastObject.type);
+    }
+
+    function toggleCommentatorMute(trackId, button) {
+        var videoView = document.getElementById("commentatorVideo" + trackId);
+        
+        if (videoView) {
+            var video = videoView.video;
+            video.muted = !video.muted;
+            
+            var img = button.querySelector('img');
+            img.src = video.muted ? '../css/external/icons/volume-mute-fill.svg' : '../css/external/icons/volume-up-fill.svg';
+            button.classList.toggle("muted", video.muted);
+        }
+    }
+
+    function setupAudioControls() {
+        var mainVideoView = document.getElementById("mainStreamVideo");
+        var mainVideo = mainVideoView.video;
+        var muteMainButton = document.getElementById("muteMainVideo");
+        var muteAllButton = document.getElementById("muteAllCommentators");
+
+        muteMainButton.addEventListener("click", function() {
+            mainVideo.muted = !mainVideo.muted;
+            
+            var img = muteMainButton.querySelector('img');
+            var span = muteMainButton.querySelector('span');
+            
+            img.src = mainVideo.muted ? '../css/external/icons/volume-mute-fill.svg' : '../css/external/icons/volume-up-fill.svg';
+            span.textContent = mainVideo.muted ? "Video Audio" : "Video Audio";
+            muteMainButton.classList.toggle("muted", mainVideo.muted);
+        });
+
+        muteAllButton.addEventListener("click", function() {
+            var allCommentatorCards = document.querySelectorAll('.commentator-card');
+            var anyUnmuted = false;
+            
+            allCommentatorCards.forEach(card => {
+                var videoView = card.querySelector('video-view');
+                if (videoView && !videoView.video.muted) {
+                    anyUnmuted = true;
+                }
+            });
+            
+            allCommentatorCards.forEach(card => {
+                var videoView = card.querySelector('video-view');
+                var button = card.querySelector('.commentator-mute-btn');
+                
+                if (videoView && button) {
+                    videoView.video.muted = anyUnmuted;
+                    var img = button.querySelector('img');
+                    img.src = anyUnmuted ? '../css/external/icons/volume-mute-fill.svg' : '../css/external/icons/volume-up-fill.svg';
+                    button.classList.toggle("muted", anyUnmuted);
+                }
+            });
+            
+            muteAllButton.textContent = anyUnmuted ? "Unmute All" : "Mute All";
+        });
+    }
+
+    function ensureVideosPlaying() {
+        var mainVideoView = document.getElementById("mainStreamVideo");
+        var mainVideo = mainVideoView.video;
+        
+        if (mainVideo && mainVideo.paused && mainVideo.srcObject) {
+            console.log("Main video paused, resuming...");
+            mainVideo.play().catch(e => console.log("Could not play main video:", e));
+        }
+
+        var allCommentatorCards = document.querySelectorAll('.commentator-card');
+        allCommentatorCards.forEach(card => {
+            var videoView = card.querySelector('video-view');
+            if (videoView) {
+                var video = videoView.video;
+                if (video.paused && video.srcObject) {
+                    console.log("Commentator video paused, resuming:", videoView.id);
+                    video.play().catch(e => console.log("Could not play commentator video:", e));
+                }
+            }
+        });
+    }
+
+    function startAutoPlayMonitor() {
+        setInterval(ensureVideosPlaying, 3000);
+        console.log("Auto-play monitor started (checks every 3 seconds)");
+    }
+
+    function setupMainVideoMonitoring(video) {
+        var overlay = document.getElementById('stream-loading-overlay');
+        
+        var checkVideoPlaying = function() {
+            if (video.videoWidth > 0 && video.videoHeight > 0 && 
+                !video.paused && video.currentTime > 0) {
+                console.log("Main video is playing with frames, hiding overlay");
+                overlay.classList.add('hidden');
+                video.removeEventListener('playing', checkVideoPlaying);
+                video.removeEventListener('timeupdate', checkVideoPlaying);
+                video.removeEventListener('loadedmetadata', checkVideoPlaying);
+            }
+        };
+
+        video.addEventListener('playing', checkVideoPlaying);
+        video.addEventListener('timeupdate', checkVideoPlaying);
+        video.addEventListener('loadedmetadata', checkVideoPlaying);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeViewer();
+        setupAudioControls();
+        startAutoPlayMonitor();
+    });
+</script>
+</body>
+</html> 

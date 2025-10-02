@@ -57,6 +57,15 @@ export const samples = [
         tags: [TAGS.PUBLISH, TAGS.PLAY, TAGS.VIDEO, TAGS.AUDIO],
         homeCardFactory: createSampleHomeCard,
     },
+    {
+        name: "Stream Commentator",
+        link: `${DEMOS_DIR}commentator-demo.html`,
+        category: CATEGORIES.LIVE_APPS,
+        description: "Add live commentary to VOD streams. Perfect for sports, reactions, watch parties and educational content.",
+        image: `${IMG_DIR}placeholder.png`,
+        tags: [TAGS.VOD, TAGS.PUBLISH, TAGS.VIDEO, TAGS.AUDIO],
+        homeCardFactory: createSampleHomeCard,
+    },
     // {
     //     name: "Webinar",
     //     link: `${SAMPLES_DIR}webinar.html`,
