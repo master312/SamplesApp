@@ -62,7 +62,7 @@ export const samples = [
         link: `${DEMOS_DIR}commentator-demo.html`,
         category: CATEGORIES.LIVE_APPS,
         description: "Add live commentary to VOD streams. Perfect for sports, reactions, watch parties and educational content.",
-        image: `${IMG_DIR}placeholder.png`,
+        image: `${IMG_DIR}commentator-demo.png`,
         tags: [TAGS.VOD, TAGS.PUBLISH, TAGS.VIDEO, TAGS.AUDIO],
         homeCardFactory: createSampleHomeCard,
     },
