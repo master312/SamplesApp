@@ -51,13 +51,28 @@ class ToggleCameraButton extends HTMLElement {
             return;
         }
 
-        if (this.isCameraOn) {
-            this._adaptor.turnOffLocalCamera();
-        } else {
-            this._adaptor.turnOnLocalCamera();
+        const needsMock = typeof this._adaptor.turnOffEffectCamera !== 'function';
+        
+        if (needsMock) {
+            // Hackfix to avoid problems when no effect manager is available
+            this._adaptor.turnOffEffectCamera = () => {};
+            this._adaptor.turnOnEffectCamera = () => {};
         }
-        this.isCameraOn = !this.isCameraOn;
-        this._updateUI();
+
+        try {
+            if (this.isCameraOn) {
+                this._adaptor.turnOffLocalCamera();
+            } else {
+                this._adaptor.turnOnLocalCamera();
+            }
+            this.isCameraOn = !this.isCameraOn;
+            this._updateUI();
+        } finally {
+            if (needsMock) {
+                delete this._adaptor.turnOffEffectCamera;
+                delete this._adaptor.turnOnEffectCamera;
+            }
+        }
     }
 
     _updateUI() {
